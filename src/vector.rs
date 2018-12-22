@@ -7,7 +7,9 @@ pub struct Vec3<T> {
     pub z: T
 }
 
-pub type Vec3f = Vec3<f64>;
+pub type Float = f64;
+
+pub type Vec3f = Vec3<Float>;
 
 impl<T: Add<Output=T>> Add for Vec3<T> {
     type Output = Self;
