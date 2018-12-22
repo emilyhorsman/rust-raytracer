@@ -1,17 +1,17 @@
-use std::ops::{Add,Sub,Mul};
+use std::ops::{Add, Mul, Sub};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Vec3<T> {
     pub x: T,
     pub y: T,
-    pub z: T
+    pub z: T,
 }
 
 pub type Float = f64;
 
 pub type Vec3f = Vec3<Float>;
 
-impl<T: Add<Output=T>> Add for Vec3<T> {
+impl<T: Add<Output = T>> Add for Vec3<T> {
     type Output = Self;
 
     fn add(self, other: Self) -> Self {
@@ -23,7 +23,7 @@ impl<T: Add<Output=T>> Add for Vec3<T> {
     }
 }
 
-impl<T: Sub<Output=T>> Sub for Vec3<T> {
+impl<T: Sub<Output = T>> Sub for Vec3<T> {
     type Output = Self;
 
     fn sub(self, other: Self) -> Self {
@@ -35,7 +35,7 @@ impl<T: Sub<Output=T>> Sub for Vec3<T> {
     }
 }
 
-impl<T: Add<Output=T>+Mul<Output=T>> Mul for Vec3<T> {
+impl<T: Add<Output = T> + Mul<Output = T>> Mul for Vec3<T> {
     type Output = T;
 
     fn mul(self, other: Self) -> T {
@@ -43,14 +43,14 @@ impl<T: Add<Output=T>+Mul<Output=T>> Mul for Vec3<T> {
     }
 }
 
-impl<T: Copy+Mul<Output=T>> Mul<T> for Vec3<T> {
+impl<T: Copy + Mul<Output = T>> Mul<T> for Vec3<T> {
     type Output = Self;
 
     fn mul(self, rhs: T) -> Self {
         Vec3 {
             x: self.x * rhs,
             y: self.y * rhs,
-            z: self.z * rhs
+            z: self.z * rhs,
         }
     }
 }
