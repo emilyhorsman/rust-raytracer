@@ -4,6 +4,12 @@ use std::path::Path;
 
 use crate::color::*;
 
+/// Writes an Image to a file with the Netpbm graphics format.
+///
+/// https://en.wikipedia.org/wiki/Netpbm_format
+///
+/// One can use `convert` from ImageMagick to make this something friendlier,
+/// but Preview.app on macOS does view these just fine.
 pub fn write_ppm(path: &Path, image: &Image) -> std::io::Result<()> {
     let width = image.len();
     let height = image[0].len();
@@ -31,6 +37,7 @@ pub fn write_ppm(path: &Path, image: &Image) -> std::io::Result<()> {
 }
 
 fn get_ppm_header(width: usize, height: usize) -> String {
+    // P6 declares this as a binary RGB color image.
     format!(
         "P6\n{width} {height}\n255\n",
         width = width,
