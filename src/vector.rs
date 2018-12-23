@@ -24,6 +24,16 @@ impl Vec3f {
             z: self.z / n,
         }
     }
+
+    pub fn eps() -> Float {
+        1e-11
+    }
+
+    pub fn approx_eq(&self, other: &Self) -> bool {
+        (self.x - other.x).abs() < Self::eps()
+            && (self.y - other.y).abs() < Self::eps()
+            && (self.z - other.z).abs() < Self::eps()
+    }
 }
 
 impl<T> Vec3<T>
