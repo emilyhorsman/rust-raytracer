@@ -1,13 +1,14 @@
 use std::fs::File;
 use std::io::prelude::*;
+use std::path::Path;
 
 use crate::color::*;
 
-pub fn write_ppm(image: &Image) -> std::io::Result<()> {
+pub fn write_ppm(path: &Path, image: &Image) -> std::io::Result<()> {
     let width = image.len();
     let height = image[0].len();
 
-    let mut file = match File::create("foo.ppm") {
+    let mut file = match File::create(path) {
         Ok(f) => f,
         Err(x) => return Err(x),
     };

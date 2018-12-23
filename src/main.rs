@@ -2,6 +2,8 @@ mod color;
 mod image_output;
 mod vector;
 
+use std::path::Path;
+
 use crate::color::*;
 use crate::image_output::*;
 use crate::vector::*;
@@ -47,7 +49,7 @@ fn main() {
         }
     }
 
-    match write_ppm(&image) {
+    match write_ppm(Path::new("foo.ppm"), &image) {
         Ok(_) => println!("Wrote image!"),
         Err(e) => eprintln!("Could not write image due to:\n{:?}", e),
     };
