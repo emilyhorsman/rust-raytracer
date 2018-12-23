@@ -24,7 +24,7 @@ fn main() {
 
     println!("u + v = {:?}", u + v);
     println!("u - v = {:?}", u - v);
-    println!("u * v = {:?}", u * v);
+    println!("u.dot(v) = {:?}", u.dot(v));
     println!("3.0 * v = {:?}", v * 3f64);
     println!("||v|| = {:?}", v.norm());
     println!("after normalize: ||v|| = {:?}", v.normalize().norm());

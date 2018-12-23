@@ -13,7 +13,7 @@ pub type Vec3f = Vec3<Float>;
 
 impl Vec3f {
     pub fn norm(self) -> Float {
-        (self * self).sqrt()
+        self.dot(self).sqrt()
     }
 
     pub fn normalize(self) -> Self {
@@ -28,7 +28,7 @@ impl Vec3f {
 
 impl<T> Vec3<T>
 where
-    T: Copy + Sub<Output = T> + Mul<Output = T>,
+    T: Copy + Add<Output = T> + Sub<Output = T> + Mul<Output = T>,
 {
     pub fn cross(self, other: Self) -> Self {
         Self {
@@ -36,6 +36,10 @@ where
             y: self.z * other.x - self.x * other.z,
             z: self.x * other.y - self.y * other.x,
         }
+    }
+
+    pub fn dot(self, other: Self) -> T {
+        self.x * other.x + self.y * other.y + self.z * other.z
     }
 }
 
@@ -63,14 +67,6 @@ impl<T: Sub<Output = T>> Sub for Vec3<T> {
     }
 }
 
-impl<T: Add<Output = T> + Mul<Output = T>> Mul for Vec3<T> {
-    type Output = T;
-
-    fn mul(self, other: Self) -> T {
-        self.x * other.x + self.y * other.y + self.z * other.z
-    }
-}
-
 impl<T: Copy + Mul<Output = T>> Mul<T> for Vec3<T> {
     type Output = Self;
 
@@ -93,5 +89,12 @@ mod tests {
         let v = Vec3 { x: 2, y: 3, z: 4 };
         assert_eq!(u.cross(v), Vec3 { x: -1, y: 2, z: -1 });
         assert_eq!(v.cross(u), Vec3 { x: 1, y: -2, z: 1 });
+    }
+
+    #[test]
+    fn it_computes_dot_product() {
+        let u = Vec3 { x: 1, y: 2, z: 3 };
+        let v = Vec3 { x: 2, y: 3, z: 4 };
+        assert_eq!(u.dot(v), 20);
     }
 }
