@@ -1,26 +1,38 @@
 use std::fs::File;
 use std::io::prelude::*;
 
-use crate::vector::*;
+use crate::color::*;
 
-pub fn write_ppm(image: &Vec<Vec<Vec3f>>) -> std::io::Result<()> {
-    let mut file = File::create("foo.ppm")?;
-    write!(
-        file,
-        "P6\n{width} {height}\n255\n",
-        width = 100,
-        height = 80
-    )?;
+pub fn write_ppm(image: &Image) -> std::io::Result<()> {
+    let width = image.len();
+    let height = image[0].len();
 
-    for y in 0..80 {
-        for x in 0..100 {
-            let buf = [
-                (image[x][y].x * 255.0) as u8,
-                (image[x][y].y * 255.0) as u8,
-                (image[x][y].z * 255.0) as u8,
-            ];
-            file.write_all(&buf);
+    let mut file = match File::create("foo.ppm") {
+        Ok(f) => f,
+        Err(x) => return Err(x),
+    };
+    let header = get_ppm_header(width, height);
+    let result = file.write_all(header.as_bytes());
+    if result.is_err() {
+        return result;
+    }
+
+    for y in 0..height {
+        for x in 0..width {
+            let buf = image[x][y].to_u8_array();
+            let result = file.write_all(&buf);
+            if result.is_err() {
+                return result;
+            }
         }
     }
     Ok(())
+}
+
+fn get_ppm_header(width: usize, height: usize) -> String {
+    format!(
+        "P6\n{width} {height}\n255\n",
+        width = width,
+        height = height
+    )
 }
