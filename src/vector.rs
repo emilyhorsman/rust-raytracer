@@ -1,6 +1,6 @@
 use std::ops::{Add, Mul, Sub};
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vec3<T> {
     pub x: T,
     pub y: T,
@@ -22,6 +22,19 @@ impl Vec3f {
             x: self.x / n,
             y: self.y / n,
             z: self.z / n,
+        }
+    }
+}
+
+impl<T> Vec3<T>
+where
+    T: Copy + Sub<Output = T> + Mul<Output = T>,
+{
+    pub fn cross(self, other: Self) -> Self {
+        Self {
+            x: self.y * other.z - self.z * other.y,
+            y: self.z * other.x - self.x * other.z,
+            z: self.x * other.y - self.y * other.x,
         }
     }
 }
@@ -67,5 +80,18 @@ impl<T: Copy + Mul<Output = T>> Mul<T> for Vec3<T> {
             y: self.y * rhs,
             z: self.z * rhs,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Vec3;
+
+    #[test]
+    fn it_computes_cross_product() {
+        let u = Vec3 { x: 1, y: 2, z: 3 };
+        let v = Vec3 { x: 2, y: 3, z: 4 };
+        assert_eq!(u.cross(v), Vec3 { x: -1, y: 2, z: -1 });
+        assert_eq!(v.cross(u), Vec3 { x: 1, y: -2, z: 1 });
     }
 }
