@@ -34,6 +34,8 @@ pub type Image = Vec<Vec<Color>>;
 
 #[cfg(test)]
 mod tests {
+    use crate::nearly_eq::assert_nearly_eq;
+
     use super::Color;
     use crate::vector::Vec3f;
 
@@ -50,10 +52,13 @@ mod tests {
             z: 0.1,
         });
         let Color(u) = a.mix(b);
-        assert!(u.approx_eq(&Vec3f {
-            x: 0.9,
-            y: 0.2,
-            z: 0.04
-        }));
+        assert_nearly_eq!(
+            u,
+            Vec3f {
+                x: 0.9,
+                y: 0.2,
+                z: 0.04
+            }
+        );
     }
 }

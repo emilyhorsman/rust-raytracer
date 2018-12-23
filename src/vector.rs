@@ -1,5 +1,7 @@
 use std::ops::{Add, Mul, Sub};
 
+use crate::nearly_eq::NearlyEq;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vec3<T> {
     pub x: T,
@@ -23,16 +25,6 @@ impl Vec3f {
             y: self.y / n,
             z: self.z / n,
         }
-    }
-
-    pub fn eps() -> Float {
-        1e-11
-    }
-
-    pub fn approx_eq(&self, other: &Self) -> bool {
-        (self.x - other.x).abs() < Self::eps()
-            && (self.y - other.y).abs() < Self::eps()
-            && (self.z - other.z).abs() < Self::eps()
     }
 }
 
@@ -86,6 +78,18 @@ impl<T: Copy + Mul<Output = T>> Mul<T> for Vec3<T> {
             y: self.y * rhs,
             z: self.z * rhs,
         }
+    }
+}
+
+impl<A, B, C: NearlyEq<A, B>> NearlyEq<Vec3<A>, B> for Vec3<C> {
+    fn eps() -> B {
+        C::eps()
+    }
+
+    fn eq(&self, other: &Vec3<A>, eps: &B) -> bool {
+        nearly_eq::NearlyEq::eq(&self.x, &other.x, eps)
+            && nearly_eq::NearlyEq::eq(&self.y, &other.y, eps)
+            && nearly_eq::NearlyEq::eq(&self.z, &other.z, eps)
     }
 }
 

@@ -1,3 +1,5 @@
+extern crate nearly_eq;
+
 mod color;
 mod image_output;
 mod point;

@@ -5,3 +5,4 @@ authors = ["Emily Horsman <me@emilyhorsman.com>"]
 edition = "2018"
 
 [dependencies]
+nearly_eq = "0.2.4"
