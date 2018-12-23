@@ -1,5 +1,7 @@
 mod color;
 mod image_output;
+mod point;
+mod ray;
 mod vector;
 
 use std::path::Path;
