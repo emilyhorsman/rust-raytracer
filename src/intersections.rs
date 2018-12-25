@@ -2,7 +2,7 @@ use crate::point::*;
 use crate::ray::*;
 use crate::vector::*;
 
-fn ray_sphere_intersection(ray: Ray) -> Option<(Float, Float)> {
+pub fn ray_sphere_intersection(ray: Ray) -> Option<(Float, Float)> {
     // Assume the sphere is of radius 1 and at the origin.
     let Point(sphere_to_ray) = ray.origin;
     let a = ray.direction.norm_squared();

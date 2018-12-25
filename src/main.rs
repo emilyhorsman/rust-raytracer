@@ -13,31 +13,17 @@ use std::path::Path;
 
 use crate::color::*;
 use crate::image_output::*;
+use crate::intersections::*;
+use crate::point::*;
+use crate::ray::*;
 use crate::vector::*;
 
 fn main() {
-    let u: Vec3f = Vec3 {
-        x: 0f64,
-        y: 1f64,
-        z: 2f64,
-    };
-    let v: Vec3f = Vec3 {
-        x: 1f64,
-        y: 2f64,
-        z: 3f64,
-    };
-
-    println!("u + v = {:?}", u + v);
-    println!("u - v = {:?}", u - v);
-    println!("u.dot(v) = {:?}", u.dot(v));
-    println!("3.0 * v = {:?}", v * 3f64);
-    println!("||v|| = {:?}", v.norm());
-    println!("after normalize: ||v|| = {:?}", v.normalize().norm());
-
-    let mut image: Image = Vec::with_capacity(100);
-    for i in 0..100 {
-        image.push(Vec::with_capacity(80));
-        for _ in 0..80 {
+    let canvas_length = 100;
+    let mut image: Image = Vec::with_capacity(canvas_length);
+    for i in 0..canvas_length {
+        image.push(Vec::with_capacity(canvas_length));
+        for _ in 0..canvas_length {
             image[i].push(Color(Vec3f {
                 x: 0.0,
                 y: 0.0,
@@ -46,13 +32,25 @@ fn main() {
         }
     }
 
-    for x in 0..100 {
-        for y in 0..80 {
-            image[x][y] = Color(Vec3f {
-                x: (x as f64) / 100.0,
-                y: (x as f64) / 100.0,
-                z: (x as f64) / 100.0,
-            });
+    let wall_z = 10.0;
+    let wall_size = 7.0;
+    let pixel_size = wall_size / (canvas_length as Float);
+    let half = wall_size / 2.0;
+    for y in 0..canvas_length {
+        let world_y = half - pixel_size * (y as Float);
+        for x in 0..canvas_length {
+            let world_x = -half + pixel_size * (x as Float);
+            let position = v(world_x, world_y, wall_z);
+            let r = Ray {
+                origin: p(0.0, 0.0, -5.0),
+                direction: (position - v(0.0, 0.0, -5.0)).normalize(),
+            };
+            let color = match ray_sphere_intersection(r) {
+                Some((_, _)) => Color(v(1.0, 0.0, 0.0)),
+                None => Color(v(0.0, 0.0, 0.0)),
+            };
+
+            image[x][y] = color;
         }
     }
 
