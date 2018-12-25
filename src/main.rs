@@ -34,8 +34,8 @@ fn main() {
     let pixel_size = wall_size / (canvas_length as Float);
     let half = wall_size / 2.0;
     let sphere = Sphere {
-        origin: Point3::new(0.0, 0.0, 0.0),
-        radius: 1.0,
+        origin: Point3::new(0.3, 0.0, 0.0),
+        radius: 0.5,
     };
     for y in 0..canvas_length {
         let world_y = half - pixel_size * (y as Float);
