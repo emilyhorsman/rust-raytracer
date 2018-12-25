@@ -1,22 +1,20 @@
-#[macro_use]
-extern crate derive_more;
-extern crate nearly_eq;
+extern crate nalgebra as na;
 
 mod color;
 mod image_output;
 mod intersections;
-mod point;
 mod ray;
-mod vector;
+mod types;
 
 use std::path::Path;
+
+use na::Point3;
 
 use crate::color::*;
 use crate::image_output::*;
 use crate::intersections::*;
-use crate::point::*;
 use crate::ray::*;
-use crate::vector::*;
+use crate::types::*;
 
 fn main() {
     let canvas_length = 100;
@@ -24,11 +22,7 @@ fn main() {
     for i in 0..canvas_length {
         image.push(Vec::with_capacity(canvas_length));
         for _ in 0..canvas_length {
-            image[i].push(Color(Vec3f {
-                x: 0.0,
-                y: 0.0,
-                z: 0.0,
-            }));
+            image[i].push(Color::new(0.0, 0.0, 0.0));
         }
     }
 
@@ -40,14 +34,14 @@ fn main() {
         let world_y = half - pixel_size * (y as Float);
         for x in 0..canvas_length {
             let world_x = -half + pixel_size * (x as Float);
-            let position = v(world_x, world_y, wall_z);
+            let position = Point3::new(world_x, world_y, wall_z);
             let r = Ray {
-                origin: p(0.0, 0.0, -5.0),
-                direction: (position - v(0.0, 0.0, -5.0)).normalize(),
+                origin: Point3::new(0.0, 0.0, -5.0),
+                direction: (position - Point3::new(0.0, 0.0, -5.0)).normalize(),
             };
             let color = match ray_sphere_intersection(r) {
-                Some((_, _)) => Color(v(1.0, 0.0, 0.0)),
-                None => Color(v(0.0, 0.0, 0.0)),
+                Some((_, _)) => Color::new(1.0, 0.0, 0.0),
+                None => Color::new(0.0, 0.0, 0.0),
             };
 
             image[x][y] = color;
