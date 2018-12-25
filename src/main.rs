@@ -4,6 +4,8 @@ mod color;
 mod image_output;
 mod intersections;
 mod ray;
+mod shape;
+mod sphere;
 mod types;
 
 use std::path::Path;
@@ -12,8 +14,9 @@ use na::Point3;
 
 use crate::color::*;
 use crate::image_output::*;
-use crate::intersections::*;
 use crate::ray::*;
+use crate::shape::*;
+use crate::sphere::*;
 use crate::types::*;
 
 fn main() {
@@ -30,6 +33,10 @@ fn main() {
     let wall_size = 7.0;
     let pixel_size = wall_size / (canvas_length as Float);
     let half = wall_size / 2.0;
+    let sphere = Sphere {
+        origin: Point3::new(0.0, 0.0, 0.0),
+        radius: 1.0,
+    };
     for y in 0..canvas_length {
         let world_y = half - pixel_size * (y as Float);
         for x in 0..canvas_length {
@@ -39,8 +46,8 @@ fn main() {
                 origin: Point3::new(0.0, 0.0, -5.0),
                 direction: (position - Point3::new(0.0, 0.0, -5.0)).normalize(),
             };
-            let color = match ray_sphere_intersection(r) {
-                Some((_, _)) => Color::new(1.0, 0.0, 0.0),
+            let color = match sphere.intersection(r) {
+                Some(_) => Color::new(1.0, 0.0, 0.0),
                 None => Color::new(0.0, 0.0, 0.0),
             };
 
