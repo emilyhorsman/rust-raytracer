@@ -9,6 +9,11 @@ pub struct Vec3<T> {
     pub z: T,
 }
 
+#[inline]
+pub fn v(x: Float, y: Float, z: Float) -> Vec3f {
+    Vec3f { x: x, y: y, z: z }
+}
+
 pub type Float = f64;
 
 pub type Vec3f = Vec3<Float>;
@@ -42,6 +47,10 @@ where
 
     pub fn dot(self, other: Self) -> T {
         self.x * other.x + self.y * other.y + self.z * other.z
+    }
+
+    pub fn norm_squared(self) -> T {
+        self.dot(self)
     }
 }
 

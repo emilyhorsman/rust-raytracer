@@ -1,7 +1,10 @@
+#[macro_use]
+extern crate derive_more;
 extern crate nearly_eq;
 
 mod color;
 mod image_output;
+mod intersections;
 mod point;
 mod ray;
 mod vector;
