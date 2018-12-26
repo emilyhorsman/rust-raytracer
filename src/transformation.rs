@@ -9,6 +9,17 @@ pub struct Transformation {
     rotate_z: Float,
 }
 
+macro_rules! make_rotate_fn {
+    ( $name:ident ) => {
+        pub fn $name(&self, angle: Float) -> Self {
+            Transformation {
+                $name: angle,
+                ..*self
+            }
+        }
+    }
+}
+
 impl Transformation {
     pub fn new() -> Self {
         Transformation {
@@ -26,12 +37,9 @@ impl Transformation {
         }
     }
 
-    pub fn rotate_z(&self, angle: Float) -> Self {
-        Transformation {
-            rotate_z: angle,
-            ..*self
-        }
-    }
+    make_rotate_fn!(rotate_x);
+    make_rotate_fn!(rotate_y);
+    make_rotate_fn!(rotate_z);
 
     pub fn matrix(&self) -> Projective3<Float> {
         let non_uniform_scaling: Affine3<_> =
