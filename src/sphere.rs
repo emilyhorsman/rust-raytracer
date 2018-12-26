@@ -1,3 +1,5 @@
+use std::f64::consts::*;
+
 use na::*;
 
 use crate::intersections::*;
@@ -57,7 +59,7 @@ mod tests {
     #[test]
     fn it_computes_normal_for_translated_sphere() {
         let sphere = Sphere::from(Transformation::new().translate(0.0, 1.0, 0.0));
-        let k = (std::f64::consts::PI / 4.0).sin();
+        let k = FRAC_PI_4.sin();
         assert_relative_eq!(
             sphere.normal_at(Point3::new(0.0, k + 1.0, -k)),
             Vector3::new(0.0, k, -k)
@@ -68,7 +70,7 @@ mod tests {
     fn it_computes_normal_for_scaled_sphere() {
         let t = Transformation::new()
             .scale(1.0, 0.5, 1.0)
-            .rotate_z(std::f64::consts::PI / 5.0);
+            .rotate_z(PI / 5.0);
         let sphere = Sphere::from(t);
         assert_relative_eq!(
             sphere.normal_at(Point3::new(0.0, (2.0).sqrt() / 2.0, -(2.0).sqrt() / 2.0)),
