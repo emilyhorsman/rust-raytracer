@@ -1,11 +1,16 @@
+#[macro_use]
+extern crate derive_more;
 extern crate nalgebra as na;
 
 mod color;
 mod image_output;
 mod intersections;
+mod material;
+mod point_light;
 mod ray;
 mod shape;
 mod sphere;
+mod trace;
 mod transformation;
 mod types;
 
@@ -15,14 +20,17 @@ use na::*;
 
 use crate::color::*;
 use crate::image_output::*;
+use crate::material::*;
+use crate::point_light::*;
 use crate::ray::*;
 use crate::shape::*;
 use crate::sphere::*;
+use crate::trace::*;
 use crate::transformation::*;
 use crate::types::*;
 
 fn main() {
-    let canvas_length = 100;
+    let canvas_length = 400;
     let mut image: Image = Vec::with_capacity(canvas_length);
     for i in 0..canvas_length {
         image.push(Vec::with_capacity(canvas_length));
@@ -40,6 +48,10 @@ fn main() {
             .translate(1.0, 0.0, 0.0)
             .scale(0.5, 0.5, 0.5),
     );
+    let light = PointLight {
+        color: Color::new(1.0, 1.0, 1.0),
+        position: Point3::new(-10.0, 10.0, -10.0),
+    };
     for y in 0..canvas_length {
         let world_y = half - pixel_size * (y as Float);
         for x in 0..canvas_length {
@@ -49,8 +61,14 @@ fn main() {
                 origin: Point3::new(0.0, 0.0, -5.0),
                 direction: (position - Point3::new(0.0, 0.0, -5.0)).normalize(),
             };
-            let color = match sphere.intersection(r) {
-                Some(_) => Color::new(1.0, 0.0, 0.0),
+            let color = match sphere.intersection(&r) {
+                Some(intersection) => lighting(
+                    Material::new(),
+                    &light,
+                    r.from_parameter(intersection),
+                    -r.direction,
+                    sphere.normal_at(r.from_parameter(intersection)),
+                ),
                 None => Color::new(0.0, 0.0, 0.0),
             };
 

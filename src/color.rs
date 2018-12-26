@@ -1,8 +1,10 @@
+use std::ops::{Add, Mul};
+
 use na::Vector3;
 
 use crate::types::*;
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Add, Mul)]
 pub struct Color(pub Vec3f);
 
 impl Color {
@@ -25,6 +27,11 @@ impl Color {
         let Color(u) = self;
         let Color(v) = other;
         Color(u.component_mul(&v))
+    }
+
+    pub fn clamp(self) -> Self {
+        let Color(v) = self;
+        Color::new(v.x.min(1.0), v.y.min(1.0), v.z.min(1.0))
     }
 }
 

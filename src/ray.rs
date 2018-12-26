@@ -10,12 +10,12 @@ pub struct Ray {
 }
 
 impl Ray {
-    fn from_parameter(&self, t: Float) -> Point3f {
+    pub fn from_parameter(&self, t: Float) -> Point3f {
         self.origin + self.direction * t
     }
 }
 
-fn reflect(incoming: Vec3f, surface_normal: Vec3f) -> Vec3f {
+pub fn reflect(incoming: Vec3f, surface_normal: Vec3f) -> Vec3f {
     incoming - surface_normal * 2.0 * incoming.dot(&surface_normal)
 }
 

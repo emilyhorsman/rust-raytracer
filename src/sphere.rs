@@ -21,7 +21,7 @@ impl From<Transformation> for Sphere {
 }
 
 impl Shape for Sphere {
-    fn intersection(&self, ray: Ray) -> Option<Float> {
+    fn intersection(&self, ray: &Ray) -> Option<Float> {
         let ray_transformation = self.object_to_world_space.inverse();
         ray_sphere_intersection(Ray {
             origin: ray_transformation * ray.origin,
