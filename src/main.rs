@@ -6,11 +6,12 @@ mod intersections;
 mod ray;
 mod shape;
 mod sphere;
+mod transformation;
 mod types;
 
 use std::path::Path;
 
-use na::Point3;
+use na::*;
 
 use crate::color::*;
 use crate::image_output::*;
@@ -34,8 +35,8 @@ fn main() {
     let pixel_size = wall_size / (canvas_length as Float);
     let half = wall_size / 2.0;
     let sphere = Sphere {
-        origin: Point3::new(0.3, 0.0, 0.0),
-        radius: 0.5,
+        object_to_world_space: Translation3::from(Vector3::new(0.3, 0.0, 0.0))
+            * Projective3::identity(),
     };
     for y in 0..canvas_length {
         let world_y = half - pixel_size * (y as Float);
