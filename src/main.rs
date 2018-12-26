@@ -18,6 +18,7 @@ use crate::image_output::*;
 use crate::ray::*;
 use crate::shape::*;
 use crate::sphere::*;
+use crate::transformation::*;
 use crate::types::*;
 
 fn main() {
@@ -31,13 +32,14 @@ fn main() {
     }
 
     let wall_z = 10.0;
-    let wall_size = 7.0;
+    let wall_size = 6.0;
     let pixel_size = wall_size / (canvas_length as Float);
     let half = wall_size / 2.0;
-    let sphere = Sphere {
-        object_to_world_space: Translation3::from(Vector3::new(0.3, 0.0, 0.0))
-            * Projective3::identity(),
-    };
+    let sphere = Sphere::from(
+        Transformation::new()
+            .translate(1.0, 0.0, 0.0)
+            .scale(0.5, 0.5, 0.5),
+    );
     for y in 0..canvas_length {
         let world_y = half - pixel_size * (y as Float);
         for x in 0..canvas_length {
