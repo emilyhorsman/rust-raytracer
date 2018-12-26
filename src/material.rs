@@ -9,8 +9,8 @@ pub struct Material {
     pub shininess: Float,
 }
 
-impl Material {
-    pub fn new() -> Self {
+impl Default for Material {
+    fn default() -> Self {
         Self {
             color: Color::new(1.0, 0.2, 1.0),
             ambient: 0.1,

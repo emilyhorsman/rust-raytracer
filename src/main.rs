@@ -63,11 +63,11 @@ fn main() {
             };
             let color = match sphere.intersection(&r) {
                 Some(intersection) => lighting(
-                    Material::new(),
+                    &Default::default(),
                     &light,
-                    r.from_parameter(intersection),
-                    -r.direction,
-                    sphere.normal_at(r.from_parameter(intersection)),
+                    &r.from_parameter(intersection),
+                    &r,
+                    &sphere.normal_at(r.from_parameter(intersection)),
                 ),
                 None => Color::new(0.0, 0.0, 0.0),
             };
