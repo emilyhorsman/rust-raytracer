@@ -61,13 +61,13 @@ fn main() {
                 origin: Point3::new(0.0, 0.0, -5.0),
                 direction: (position - Point3::new(0.0, 0.0, -5.0)).normalize(),
             };
-            let color = match sphere.intersection(&r) {
-                Some(intersection) => lighting(
+            let color = match sphere.intersection(&r).map(|t| r.from_parameter(t)) {
+                Some(intersection_point) => lighting(
                     &Default::default(),
                     &light,
-                    &r.from_parameter(intersection),
+                    &intersection_point,
                     &r,
-                    &sphere.normal_at(r.from_parameter(intersection)),
+                    &sphere.normal_at(intersection_point),
                 ),
                 None => Color::new(0.0, 0.0, 0.0),
             };
