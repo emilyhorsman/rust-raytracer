@@ -21,7 +21,6 @@ use na::*;
 
 use crate::color::*;
 use crate::image_output::*;
-use crate::material::*;
 use crate::point_light::*;
 use crate::ray::*;
 use crate::scene::*;
@@ -63,22 +62,7 @@ fn main() {
                 origin: Point3::new(0.0, 0.0, -5.0),
                 direction: (position - Point3::new(0.0, 0.0, -5.0)).normalize(),
             };
-            let color = match scene.intersection(&r).map(|(t, obj)| (r.point_at(t), obj)) {
-                Some((intersection_point, obj)) => shade_intersection(
-                    &Material {
-                        color: Color::new(1.0, 0.2, 1.0),
-                        ..Default::default()
-                    },
-                    &scene.lights,
-                    &intersection_point,
-                    &r,
-                    obj.normal_at(intersection_point),
-                )
-                .clamp(),
-                None => Color::new(0.0, 0.0, 0.0),
-            };
-
-            image[x][y] = color;
+            image[x][y] = trace(&scene, r);
         }
     }
 

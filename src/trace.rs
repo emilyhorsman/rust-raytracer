@@ -2,9 +2,27 @@ use crate::color::*;
 use crate::material::*;
 use crate::point_light::*;
 use crate::ray::*;
+use crate::scene::*;
 use crate::types::*;
 
-pub fn shade_intersection(
+pub fn trace(scene: &Scene, ray: Ray) -> Color {
+    match scene.intersection(&ray).map(|(t, obj)| (ray.point_at(t), obj)) {
+        Some((intersection_point, obj)) => shade_intersection(
+            &Material {
+                color: Color::new(1.0, 0.2, 1.0),
+                ..Default::default()
+            },
+            &scene.lights,
+            &intersection_point,
+            &ray,
+            obj.normal_at(intersection_point),
+            )
+            .clamp(),
+        None => Color::new(0.0, 0.0, 0.0),
+    }
+}
+
+fn shade_intersection(
     material: &Material,
     lights: &Vec<PointLight>,
     point: &Point3f,
