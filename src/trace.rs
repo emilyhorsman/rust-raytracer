@@ -5,7 +5,7 @@ use crate::ray::*;
 use crate::scene::*;
 use crate::types::*;
 
-pub fn trace(scene: &Scene, ray: Ray) -> Color {
+pub fn trace(scene: &Scene, ray: &Ray) -> Color {
     match scene
         .intersection(&ray)
         .map(|(t, obj)| (ray.point_at(t), obj))

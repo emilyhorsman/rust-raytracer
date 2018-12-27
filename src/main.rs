@@ -14,6 +14,7 @@ mod shape;
 mod sphere;
 mod trace;
 mod types;
+mod view_transformation;
 
 use std::path::Path;
 
@@ -62,7 +63,7 @@ fn main() {
                 origin: Point3::new(0.0, 0.0, -5.0),
                 direction: (position - Point3::new(0.0, 0.0, -5.0)).normalize(),
             };
-            image[x][y] = trace(&scene, r);
+            image[x][y] = trace(&scene, &r);
         }
     }
 
