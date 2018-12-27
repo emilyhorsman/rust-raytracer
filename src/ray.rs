@@ -9,6 +9,10 @@ impl Ray {
     pub fn point_at(&self, t: Float) -> Point3f {
         self.origin + self.direction * t
     }
+
+    pub fn direction_to_origin(&self) -> Vec3f {
+        -self.direction
+    }
 }
 
 pub fn reflect(incoming: &Vec3f, surface_normal: &Vec3f) -> Vec3f {

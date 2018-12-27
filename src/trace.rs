@@ -43,7 +43,7 @@ fn light_contribution(
 /// returns the cosine of the angle between the reflection vector and eye vector.
 fn reflection_ratio(incoming_ray: &Ray, normal: &Vec3f, shadow_direction: &Vec3f) -> Option<Float> {
     let reflection_direction = reflect(&(-shadow_direction), normal);
-    let ratio = reflection_direction.dot(&(-incoming_ray.direction));
+    let ratio = reflection_direction.dot(&incoming_ray.direction_to_origin());
     if ratio <= 0.0 {
         None
     } else {
