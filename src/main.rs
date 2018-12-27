@@ -8,6 +8,7 @@ mod intersections;
 mod material;
 mod point_light;
 mod ray;
+mod scene;
 mod shape;
 mod sphere;
 mod trace;
@@ -23,6 +24,7 @@ use crate::image_output::*;
 use crate::material::*;
 use crate::point_light::*;
 use crate::ray::*;
+use crate::scene::*;
 use crate::shape::*;
 use crate::sphere::*;
 use crate::trace::*;
@@ -40,18 +42,19 @@ fn main() {
     }
 
     let wall_z = 10.0;
-    let wall_size = 6.0;
+    let wall_size = 7.0;
     let pixel_size = wall_size / (canvas_length as Float);
     let half = wall_size / 2.0;
-    let sphere = Sphere::from(
+    let mut scene: Scene = Default::default();
+    scene.objects.push(Box::new(Sphere::from(
         Transformation::new()
-            .translate(1.0, 0.0, 0.0)
-            .scale(0.5, 0.5, 0.5),
-    );
-    let light = PointLight {
-        color: Color::new(1.0, 1.0, 1.0),
-        position: Point3::new(-10.0, 10.0, -10.0),
-    };
+            .scale(0.2, 0.1, 0.2)
+            .translate(0.5, 0.0, -2.0),
+    )));
+    scene.lights.push(PointLight {
+        color: Color::new(1.0, 0.0, 0.0),
+        position: Point3::new(10.0, 10.0, -10.0),
+    });
     for y in 0..canvas_length {
         let world_y = half - pixel_size * (y as Float);
         for x in 0..canvas_length {
@@ -61,16 +64,16 @@ fn main() {
                 origin: Point3::new(0.0, 0.0, -5.0),
                 direction: (position - Point3::new(0.0, 0.0, -5.0)).normalize(),
             };
-            let color = match sphere.intersection(&r).map(|t| r.point_at(t)) {
-                Some(intersection_point) => lighting(
+            let color = match scene.intersection(&r).map(|(t, obj)| (r.point_at(t), obj)) {
+                Some((intersection_point, obj)) => lighting(
                     &Material {
                         color: Color::new(1.0, 0.2, 1.0),
                         ..Default::default()
                     },
-                    &light,
+                    &scene.lights,
                     &intersection_point,
                     &r,
-                    &sphere.normal_at(intersection_point),
+                    &obj.normal_at(intersection_point),
                 )
                 .clamp(),
                 None => Color::new(0.0, 0.0, 0.0),

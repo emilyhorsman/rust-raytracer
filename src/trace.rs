@@ -6,6 +6,20 @@ use crate::types::*;
 
 pub fn lighting(
     material: &Material,
+    lights: &Vec<PointLight>,
+    point: &Point3f,
+    incoming_ray: &Ray,
+    normal: &Vec3f,
+) -> Color {
+    let mut color = Color::new(0.0, 0.0, 0.0);
+    for light in lights {
+        color += lighting_single(material, light, point, incoming_ray, normal)
+    }
+    color
+}
+
+fn lighting_single(
+    material: &Material,
     light: &PointLight,
     point: &Point3f,
     incoming_ray: &Ray,
@@ -127,7 +141,6 @@ mod tests {
         );
         let k = 0.1 + 0.9 * FRAC_PI_4.sin();
         assert_relative_eq!(color.0, Vector3::new(k, k, k));
-
     }
 
     #[test]
@@ -153,7 +166,11 @@ mod tests {
         let k = 0.1 + 0.9 + 0.9 * FRAC_PI_4.sin();
         // Unfortunately this test suffers a liiiiitle more floating point error than
         // usual.
-        assert!(relative_eq!(color.0, Vector3::new(k, k, k), epsilon = 1e-13));
+        assert!(relative_eq!(
+            color.0,
+            Vector3::new(k, k, k),
+            epsilon = 1e-13
+        ));
     }
 
     #[test]
