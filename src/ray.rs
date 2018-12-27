@@ -13,6 +13,10 @@ impl Ray {
     pub fn direction_to_origin(&self) -> Vec3f {
         -self.direction
     }
+
+    pub fn is_inside(&self, normal: &Vec3f) -> bool {
+        normal.dot(&self.direction) > 0.0
+    }
 }
 
 pub fn reflect(incoming: &Vec3f, surface_normal: &Vec3f) -> Vec3f {

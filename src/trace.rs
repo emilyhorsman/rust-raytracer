@@ -4,19 +4,25 @@ use crate::point_light::*;
 use crate::ray::*;
 use crate::types::*;
 
-pub fn surface_color(
+pub fn shade_intersection(
     material: &Material,
     lights: &Vec<PointLight>,
     point: &Point3f,
     incoming_ray: &Ray,
-    normal: &Vec3f,
+    normal: Vec3f,
 ) -> Color {
     let ambient = material.color * material.ambient;
-    ambient + lights
-        .iter()
-        .fold(Color::new(0.0, 0.0, 0.0), |total, light| {
-            total + light_contribution(material, light, point, incoming_ray, normal)
-        })
+    let corrected_normal = if incoming_ray.is_inside(&normal) {
+        -normal
+    } else {
+        normal
+    };
+    ambient
+        + lights
+            .iter()
+            .fold(Color::new(0.0, 0.0, 0.0), |total, light| {
+                total + light_contribution(material, light, point, incoming_ray, &corrected_normal)
+            })
 }
 
 fn light_contribution(
@@ -75,6 +81,9 @@ mod tests {
     use na::{Point3, Vector3};
 
     use super::*;
+    use crate::shape::*;
+    use crate::sphere::*;
+    use crate::transformation::*;
 
     #[test]
     fn it_computes_lighting_behind_eye() {
@@ -86,12 +95,12 @@ mod tests {
             origin: Point3::new(0.0, 0.0, -5.0),
             direction: Vector3::new(0.0, 0.0, 1.0),
         };
-        let color = surface_color(
+        let color = shade_intersection(
             &Default::default(),
             &vec![light],
             &Point3::new(0.0, 0.0, 0.0),
             &r,
-            &Vector3::new(0.0, 0.0, -1.0),
+            Vector3::new(0.0, 0.0, -1.0),
         );
         assert_relative_eq!(color.0, Vector3::new(1.9, 1.9, 1.9));
     }
@@ -109,12 +118,12 @@ mod tests {
             origin: Point3::new(0.0, 5.0, -5.0),
             direction: Vector3::new(0.0, FRAC_PI_4.sin(), FRAC_PI_4.sin()),
         };
-        let color = surface_color(
+        let color = shade_intersection(
             &Default::default(),
             &vec![light],
             &Point3::new(0.0, 0.0, 0.0),
             &r,
-            &Vector3::new(0.0, 0.0, -1.0),
+            Vector3::new(0.0, 0.0, -1.0),
         );
         assert_relative_eq!(color.0, Vector3::new(1.0, 1.0, 1.0));
     }
@@ -131,12 +140,12 @@ mod tests {
             origin: Point3::new(0.0, 0.0, -5.0),
             direction: Vector3::new(0.0, 0.0, 1.0),
         };
-        let color = surface_color(
+        let color = shade_intersection(
             &Default::default(),
             &vec![light],
             &Point3::new(0.0, 0.0, 0.0),
             &r,
-            &Vector3::new(0.0, 0.0, -1.0),
+            Vector3::new(0.0, 0.0, -1.0),
         );
         let k = 0.1 + 0.9 * FRAC_PI_4.sin();
         assert_relative_eq!(color.0, Vector3::new(k, k, k));
@@ -155,12 +164,12 @@ mod tests {
             origin: Point3::new(0.0, -10.0, -10.0),
             direction: Vector3::new(0.0, FRAC_PI_4.sin(), FRAC_PI_4.sin()),
         };
-        let color = surface_color(
+        let color = shade_intersection(
             &Default::default(),
             &vec![light],
             &Point3::new(0.0, 0.0, 0.0),
             &r,
-            &Vector3::new(0.0, 0.0, -1.0),
+            Vector3::new(0.0, 0.0, -1.0),
         );
         let k = 0.1 + 0.9 + 0.9 * FRAC_PI_4.sin();
         // Unfortunately this test suffers a liiiiitle more floating point error than
@@ -183,13 +192,35 @@ mod tests {
             origin: Point3::new(0.0, 0.0, -5.0),
             direction: Vector3::new(0.0, 0.0, 1.0),
         };
-        let color = surface_color(
+        let color = shade_intersection(
             &Default::default(),
             &vec![light],
             &Point3::new(0.0, 0.0, 0.0),
             &r,
-            &Vector3::new(0.0, 0.0, -1.0),
+            Vector3::new(0.0, 0.0, -1.0),
         );
         assert_relative_eq!(color.0, Vector3::new(0.1, 0.1, 0.1));
+    }
+
+    #[test]
+    fn it_computes_lighting_inside_object() {
+        let light = PointLight {
+            color: Color::new(1.0, 1.0, 1.0),
+            position: Point3::new(0.0, 0.0, 0.0),
+        };
+        let r = Ray {
+            origin: Point3::new(0.0, 0.0, 0.0),
+            direction: Vector3::new(0.0, 0.0, 1.0),
+        };
+        let s = Sphere::from(Transformation::new());
+        let point = s.intersection(&r).map(|t| r.point_at(t)).unwrap();
+        let color = shade_intersection(
+            &Default::default(),
+            &vec![light],
+            &point,
+            &r,
+            s.normal_at(point),
+        );
+        assert_relative_eq!(color.0, Vector3::new(1.9, 1.9, 1.9));
     }
 }

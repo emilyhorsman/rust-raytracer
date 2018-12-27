@@ -64,7 +64,7 @@ fn main() {
                 direction: (position - Point3::new(0.0, 0.0, -5.0)).normalize(),
             };
             let color = match scene.intersection(&r).map(|(t, obj)| (r.point_at(t), obj)) {
-                Some((intersection_point, obj)) => surface_color(
+                Some((intersection_point, obj)) => shade_intersection(
                     &Material {
                         color: Color::new(1.0, 0.2, 1.0),
                         ..Default::default()
@@ -72,7 +72,7 @@ fn main() {
                     &scene.lights,
                     &intersection_point,
                     &r,
-                    &obj.normal_at(intersection_point),
+                    obj.normal_at(intersection_point),
                 )
                 .clamp(),
                 None => Color::new(0.0, 0.0, 0.0),

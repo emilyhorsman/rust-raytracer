@@ -25,7 +25,16 @@ impl Shape for Sphere {
             origin: ray_transformation * ray.origin,
             direction: ray_transformation * ray.direction,
         })
-        .map(|(a, b)| a.min(b))
+        .and_then(|(a, b)| {
+            // Pick the minimum intersection not behind the ray.
+            if a >= 0.0 && a < b {
+                Some(a)
+            } else if b >= 0.0 {
+                Some(b)
+            } else {
+                None
+            }
+        })
     }
 
     fn normal_at(&self, world_point: Point3f) -> Vec3f {
@@ -46,6 +55,16 @@ mod tests {
     use approx::assert_relative_eq;
 
     use super::*;
+
+    #[test]
+    fn it_only_returns_non_negative_intersection() {
+        let sphere = Sphere::from(Transformation::new());
+        let r = Ray {
+            origin: Point3::new(0.0, 0.0, 0.0),
+            direction: Vector3::new(0.0, 0.0, 1.0),
+        };
+        assert_relative_eq!(sphere.intersection(&r).unwrap(), 1.0);
+    }
 
     #[test]
     fn it_computes_normal() {
