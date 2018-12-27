@@ -12,11 +12,11 @@ pub struct Material {
 impl Default for Material {
     fn default() -> Self {
         Self {
-            color: Color::new(1.0, 0.2, 1.0),
+            color: Color::new(1.0, 1.0, 1.0),
             ambient: 0.1,
             diffuse: 0.9,
             specular: 0.9,
-            shininess: 20.0,
+            shininess: 200.0,
         }
     }
 }

@@ -20,6 +20,7 @@ use na::*;
 
 use crate::color::*;
 use crate::image_output::*;
+use crate::material::*;
 use crate::point_light::*;
 use crate::ray::*;
 use crate::shape::*;
@@ -62,12 +63,16 @@ fn main() {
             };
             let color = match sphere.intersection(&r).map(|t| r.point_at(t)) {
                 Some(intersection_point) => lighting(
-                    &Default::default(),
+                    &Material {
+                        color: Color::new(1.0, 0.2, 1.0),
+                        ..Default::default()
+                    },
                     &light,
                     &intersection_point,
                     &r,
                     &sphere.normal_at(intersection_point),
-                ),
+                )
+                .clamp(),
                 None => Color::new(0.0, 0.0, 0.0),
             };
 
