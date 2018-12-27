@@ -2,7 +2,7 @@ use na::*;
 
 use crate::types::*;
 
-pub struct Transformation {
+pub struct ModelTransformation {
     rotate_x: Float,
     rotate_y: Float,
     rotate_z: Float,
@@ -21,7 +21,7 @@ macro_rules! make_rotate_fn {
     }
 }
 
-impl Transformation {
+impl ModelTransformation {
     pub fn new() -> Self {
         Self {
             rotate_x: 0.0,

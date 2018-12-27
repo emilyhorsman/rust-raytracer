@@ -6,13 +6,13 @@ mod color;
 mod image_output;
 mod intersections;
 mod material;
+mod model_transformation;
 mod point_light;
 mod ray;
 mod scene;
 mod shape;
 mod sphere;
 mod trace;
-mod transformation;
 mod types;
 
 use std::path::Path;
@@ -21,12 +21,12 @@ use na::*;
 
 use crate::color::*;
 use crate::image_output::*;
+use crate::model_transformation::*;
 use crate::point_light::*;
 use crate::ray::*;
 use crate::scene::*;
 use crate::sphere::*;
 use crate::trace::*;
-use crate::transformation::*;
 use crate::types::*;
 
 fn main() {
@@ -45,7 +45,7 @@ fn main() {
     let half = wall_size / 2.0;
     let mut scene: Scene = Default::default();
     scene.objects.push(Box::new(Sphere::from(
-        Transformation::new()
+        ModelTransformation::new()
             .scale(0.2, 0.1, 0.2)
             .translate(0.5, 0.0, -2.0),
     )));

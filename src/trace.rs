@@ -6,7 +6,10 @@ use crate::scene::*;
 use crate::types::*;
 
 pub fn trace(scene: &Scene, ray: Ray) -> Color {
-    match scene.intersection(&ray).map(|(t, obj)| (ray.point_at(t), obj)) {
+    match scene
+        .intersection(&ray)
+        .map(|(t, obj)| (ray.point_at(t), obj))
+    {
         Some((intersection_point, obj)) => shade_intersection(
             &Material {
                 color: Color::new(1.0, 0.2, 1.0),
@@ -16,8 +19,8 @@ pub fn trace(scene: &Scene, ray: Ray) -> Color {
             &intersection_point,
             &ray,
             obj.normal_at(intersection_point),
-            )
-            .clamp(),
+        )
+        .clamp(),
         None => Color::new(0.0, 0.0, 0.0),
     }
 }
@@ -99,9 +102,9 @@ mod tests {
     use na::{Point3, Vector3};
 
     use super::*;
+    use crate::model_transformation::*;
     use crate::shape::*;
     use crate::sphere::*;
-    use crate::transformation::*;
 
     #[test]
     fn it_computes_lighting_behind_eye() {
@@ -230,7 +233,7 @@ mod tests {
             origin: Point3::new(0.0, 0.0, 0.0),
             direction: Vector3::new(0.0, 0.0, 1.0),
         };
-        let s = Sphere::from(Transformation::new());
+        let s = Sphere::from(ModelTransformation::new());
         let point = s.intersection(&r).map(|t| r.point_at(t)).unwrap();
         let color = shade_intersection(
             &Default::default(),

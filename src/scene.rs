@@ -1,11 +1,11 @@
 use na::Point3;
 
 use crate::color::*;
+use crate::model_transformation::*;
 use crate::point_light::*;
 use crate::ray::*;
 use crate::shape::*;
 use crate::sphere::*;
-use crate::transformation::*;
 use crate::types::*;
 
 pub struct Scene {
@@ -15,7 +15,9 @@ pub struct Scene {
 
 impl Default for Scene {
     fn default() -> Self {
-        let obj = Box::new(Sphere::from(Transformation::new().scale(0.5, 0.5, 0.5)));
+        let obj = Box::new(Sphere::from(
+            ModelTransformation::new().scale(0.5, 0.5, 0.5),
+        ));
         let light = PointLight {
             color: Color::new(1.0, 1.0, 1.0),
             position: Point3::new(-10.0, 10.0, -10.0),

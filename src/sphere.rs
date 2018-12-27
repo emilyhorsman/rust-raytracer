@@ -1,17 +1,17 @@
 use na::*;
 
 use crate::intersections::*;
+use crate::model_transformation::*;
 use crate::ray::*;
 use crate::shape::*;
-use crate::transformation::*;
 use crate::types::*;
 
 pub struct Sphere {
     pub object_to_world_space: Projective3<Float>,
 }
 
-impl From<Transformation> for Sphere {
-    fn from(t: Transformation) -> Self {
+impl From<ModelTransformation> for Sphere {
+    fn from(t: ModelTransformation) -> Self {
         Self {
             object_to_world_space: t.matrix(),
         }
@@ -58,7 +58,7 @@ mod tests {
 
     #[test]
     fn it_only_returns_non_negative_intersection() {
-        let sphere = Sphere::from(Transformation::new());
+        let sphere = Sphere::from(ModelTransformation::new());
         let r = Ray {
             origin: Point3::new(0.0, 0.0, 0.0),
             direction: Vector3::new(0.0, 0.0, 1.0),
@@ -68,7 +68,7 @@ mod tests {
 
     #[test]
     fn it_computes_normal() {
-        let sphere = Sphere::from(Transformation::new());
+        let sphere = Sphere::from(ModelTransformation::new());
         let k = (3.0).sqrt() / 3.0;
         assert_relative_eq!(
             sphere.normal_at(Point3::new(k, k, k)),
@@ -78,7 +78,7 @@ mod tests {
 
     #[test]
     fn it_computes_normal_for_translated_sphere() {
-        let sphere = Sphere::from(Transformation::new().translate(0.0, 1.0, 0.0));
+        let sphere = Sphere::from(ModelTransformation::new().translate(0.0, 1.0, 0.0));
         let k = FRAC_PI_4.sin();
         assert_relative_eq!(
             sphere.normal_at(Point3::new(0.0, k + 1.0, -k)),
@@ -88,7 +88,7 @@ mod tests {
 
     #[test]
     fn it_computes_normal_for_scaled_sphere() {
-        let t = Transformation::new()
+        let t = ModelTransformation::new()
             .scale(1.0, 0.5, 1.0)
             .rotate_z(PI / 5.0);
         let sphere = Sphere::from(t);
