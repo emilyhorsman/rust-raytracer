@@ -4,21 +4,22 @@ use crate::point_light::*;
 use crate::ray::*;
 use crate::types::*;
 
-pub fn lighting(
+pub fn surface_color(
     material: &Material,
     lights: &Vec<PointLight>,
     point: &Point3f,
     incoming_ray: &Ray,
     normal: &Vec3f,
 ) -> Color {
-    let mut color = Color::new(0.0, 0.0, 0.0);
-    for light in lights {
-        color += lighting_single(material, light, point, incoming_ray, normal)
-    }
-    color
+    let ambient = material.color * material.ambient;
+    ambient + lights
+        .iter()
+        .fold(Color::new(0.0, 0.0, 0.0), |total, light| {
+            total + light_contribution(material, light, point, incoming_ray, normal)
+        })
 }
 
-fn lighting_single(
+fn light_contribution(
     material: &Material,
     light: &PointLight,
     point: &Point3f,
@@ -27,17 +28,15 @@ fn lighting_single(
 ) -> Color {
     let effective_color = material.color.mix(light.color);
     let shadow_direction = light.direction_from(point);
-    let ambient = effective_color * material.ambient;
 
     let facing_ratio = shadow_direction.dot(&normal);
     if facing_ratio < 0.0 {
-        return ambient;
+        return Color::new(0.0, 0.0, 0.0);
     }
 
     let diffuse = effective_color * material.diffuse * facing_ratio;
     let specular = compute_reflection(material, light, incoming_ray, normal, &shadow_direction);
-
-    ambient + diffuse + specular
+    diffuse + specular
 }
 
 /// Returns None if the shadow ray is being reflected away from the eye. Otherwise this
@@ -87,9 +86,9 @@ mod tests {
             origin: Point3::new(0.0, 0.0, -5.0),
             direction: Vector3::new(0.0, 0.0, 1.0),
         };
-        let color = lighting(
+        let color = surface_color(
             &Default::default(),
-            &light,
+            &vec![light],
             &Point3::new(0.0, 0.0, 0.0),
             &r,
             &Vector3::new(0.0, 0.0, -1.0),
@@ -110,9 +109,9 @@ mod tests {
             origin: Point3::new(0.0, 5.0, -5.0),
             direction: Vector3::new(0.0, FRAC_PI_4.sin(), FRAC_PI_4.sin()),
         };
-        let color = lighting(
+        let color = surface_color(
             &Default::default(),
-            &light,
+            &vec![light],
             &Point3::new(0.0, 0.0, 0.0),
             &r,
             &Vector3::new(0.0, 0.0, -1.0),
@@ -132,9 +131,9 @@ mod tests {
             origin: Point3::new(0.0, 0.0, -5.0),
             direction: Vector3::new(0.0, 0.0, 1.0),
         };
-        let color = lighting(
+        let color = surface_color(
             &Default::default(),
-            &light,
+            &vec![light],
             &Point3::new(0.0, 0.0, 0.0),
             &r,
             &Vector3::new(0.0, 0.0, -1.0),
@@ -156,9 +155,9 @@ mod tests {
             origin: Point3::new(0.0, -10.0, -10.0),
             direction: Vector3::new(0.0, FRAC_PI_4.sin(), FRAC_PI_4.sin()),
         };
-        let color = lighting(
+        let color = surface_color(
             &Default::default(),
-            &light,
+            &vec![light],
             &Point3::new(0.0, 0.0, 0.0),
             &r,
             &Vector3::new(0.0, 0.0, -1.0),
@@ -184,9 +183,9 @@ mod tests {
             origin: Point3::new(0.0, 0.0, -5.0),
             direction: Vector3::new(0.0, 0.0, 1.0),
         };
-        let color = lighting(
+        let color = surface_color(
             &Default::default(),
-            &light,
+            &vec![light],
             &Point3::new(0.0, 0.0, 0.0),
             &r,
             &Vector3::new(0.0, 0.0, -1.0),

@@ -25,7 +25,6 @@ use crate::material::*;
 use crate::point_light::*;
 use crate::ray::*;
 use crate::scene::*;
-use crate::shape::*;
 use crate::sphere::*;
 use crate::trace::*;
 use crate::transformation::*;
@@ -65,7 +64,7 @@ fn main() {
                 direction: (position - Point3::new(0.0, 0.0, -5.0)).normalize(),
             };
             let color = match scene.intersection(&r).map(|(t, obj)| (r.point_at(t), obj)) {
-                Some((intersection_point, obj)) => lighting(
+                Some((intersection_point, obj)) => surface_color(
                     &Material {
                         color: Color::new(1.0, 0.2, 1.0),
                         ..Default::default()
