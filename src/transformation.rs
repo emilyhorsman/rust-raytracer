@@ -53,11 +53,11 @@ impl Transformation {
     pub fn matrix(&self) -> Projective3<Float> {
         let non_uniform_scaling: Affine3<_> =
             Affine3::from_matrix_unchecked(Matrix::from_diagonal(&self.scale));
-        let m = non_uniform_scaling
-            * Rotation3::from_axis_angle(&Vector3::x_axis(), self.rotate_x)
+        let m = Rotation3::from_axis_angle(&Vector3::x_axis(), self.rotate_x)
             * Rotation3::from_axis_angle(&Vector3::y_axis(), self.rotate_y)
             * Rotation3::from_axis_angle(&Vector3::z_axis(), self.rotate_z)
-            * Translation3::from(self.translate);
+            * Translation3::from(self.translate)
+            * non_uniform_scaling;
         m.set_category::<TProjective>()
     }
 }
