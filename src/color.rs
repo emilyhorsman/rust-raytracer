@@ -1,5 +1,3 @@
-use std::ops::{Add, Mul};
-
 use na::Vector3;
 
 use crate::types::*;

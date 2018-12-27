@@ -1,5 +1,3 @@
-use std::f64::consts::*;
-
 use na::*;
 
 use crate::intersections::*;
@@ -23,7 +21,7 @@ impl From<Transformation> for Sphere {
 impl Shape for Sphere {
     fn intersection(&self, ray: &Ray) -> Option<Float> {
         let ray_transformation = self.object_to_world_space.inverse();
-        ray_sphere_intersection(Ray {
+        ray_sphere_intersection(&Ray {
             origin: ray_transformation * ray.origin,
             direction: ray_transformation * ray.direction,
         })
@@ -43,8 +41,11 @@ impl Shape for Sphere {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use std::f64::consts::*;
+
     use approx::assert_relative_eq;
+
+    use super::*;
 
     #[test]
     fn it_computes_normal() {

@@ -1,7 +1,3 @@
-use std::f64::consts::*;
-
-use na::{Point3, Vector3};
-
 use crate::types::*;
 
 pub struct Ray {
@@ -10,7 +6,7 @@ pub struct Ray {
 }
 
 impl Ray {
-    pub fn from_parameter(&self, t: Float) -> Point3f {
+    pub fn point_at(&self, t: Float) -> Point3f {
         self.origin + self.direction * t
     }
 }
@@ -21,17 +17,21 @@ pub fn reflect(incoming: &Vec3f, surface_normal: &Vec3f) -> Vec3f {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use std::f64::consts::*;
+
     use approx::assert_relative_eq;
+    use na::{Point3, Vector3};
+
+    use super::*;
 
     #[test]
-    fn it_computes_ray_from_parameter_t() {
+    fn it_computes_ray_point_at_t() {
         let r = Ray {
             origin: Point3::new(2.0, 3.0, 4.0),
             direction: Vector3::new(1.0, 0.0, 0.0),
         };
-        assert_relative_eq!(r.from_parameter(0.0), Point3::new(2.0, 3.0, 4.0),);
-        assert_relative_eq!(r.from_parameter(-1.0), Point3::new(1.0, 3.0, 4.0),);
+        assert_relative_eq!(r.point_at(0.0), Point3::new(2.0, 3.0, 4.0),);
+        assert_relative_eq!(r.point_at(-1.0), Point3::new(1.0, 3.0, 4.0),);
     }
 
     #[test]
