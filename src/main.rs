@@ -49,7 +49,7 @@ fn main() {
     }));
     scene.objects.push(Box::new(Plane {
         object_to_world_space: ModelTransformation::new()
-            .translate(0.0, -5.0, 0.0)
+            .translate(0.0, -1.5, 0.0)
             .matrix(),
         material: Default::default(),
     }));
@@ -69,15 +69,15 @@ fn main() {
     }));
     scene.lights.push(PointLight {
         color: Color::new(0.5, 0.5, 0.5),
-        position: Point3::new(10.0, 10.0, -10.0),
+        position: Point3::new(1.0, 1.0, -5.0),
     });
 
     let camera = Camera {
         canvas_width: 500,
         canvas_height: 400,
-        field_of_view_radians: FRAC_PI_4,
+        field_of_view_radians: FRAC_PI_2,
         transform: ViewTransformation {
-            from: Point3::new(0.0, 0.0, -5.0),
+            from: Point3::new(0.0, 3.0, -5.0),
             to: Point3::new(0.0, 0.0, -1.0),
             up: Vector3::new(0.0, 1.0, 0.0),
         }

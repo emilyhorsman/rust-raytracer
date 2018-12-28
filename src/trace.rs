@@ -18,6 +18,7 @@ fn trace(scene: &Scene, ray: &Ray) -> Color {
         .map(|(t, obj)| (ray.point_at(t), obj))
     {
         Some((intersection_point, obj)) => shade_intersection(
+            scene,
             obj,
             &scene.lights,
             &intersection_point,
@@ -30,6 +31,7 @@ fn trace(scene: &Scene, ray: &Ray) -> Color {
 }
 
 fn shade_intersection(
+    scene: &Scene,
     shape: &Shape,
     lights: &Vec<PointLight>,
     point: &Point3f,
@@ -46,19 +48,36 @@ fn shade_intersection(
         + lights
             .iter()
             .fold(Color::new(0.0, 0.0, 0.0), |total, light| {
-                total + light_contribution(shape, light, point, incoming_ray, &corrected_normal)
+                total
+                    + light_contribution(
+                        scene,
+                        shape,
+                        light,
+                        point,
+                        incoming_ray,
+                        &corrected_normal,
+                    )
             })
 }
 
 fn light_contribution(
+    scene: &Scene,
     shape: &Shape,
     light: &PointLight,
     point: &Point3f,
     incoming_ray: &Ray,
     normal: &Vec3f,
 ) -> Color {
+    let (distance, shadow_direction) = light.direction_from(point);
+    let shadow_ray = Ray {
+        origin: *point + normal * 1e-8,
+        direction: shadow_direction,
+    };
+    if scene.is_occluded(&shadow_ray, distance) {
+        return Color::new(0.0, 0.0, 0.0);
+    }
+
     let effective_color = shape.color_at(point).mix(light.color);
-    let shadow_direction = light.direction_from(point);
 
     let facing_ratio = shadow_direction.dot(&normal);
     if facing_ratio < 0.0 {
@@ -114,6 +133,13 @@ mod tests {
     use super::*;
     use crate::sphere::*;
 
+    fn empty_scene() -> Scene {
+        Scene {
+            objects: vec![],
+            lights: vec![],
+        }
+    }
+
     #[test]
     fn it_computes_lighting_behind_eye() {
         let light = PointLight {
@@ -129,6 +155,7 @@ mod tests {
             material: Default::default(),
         };
         let color = shade_intersection(
+            &empty_scene(),
             &s,
             &vec![light],
             &Point3::new(0.0, 0.0, 0.0),
@@ -156,6 +183,7 @@ mod tests {
             material: Default::default(),
         };
         let color = shade_intersection(
+            &empty_scene(),
             &s,
             &vec![light],
             &Point3::new(0.0, 0.0, 0.0),
@@ -182,6 +210,7 @@ mod tests {
             material: Default::default(),
         };
         let color = shade_intersection(
+            &empty_scene(),
             &s,
             &vec![light],
             &Point3::new(0.0, 0.0, 0.0),
@@ -210,6 +239,7 @@ mod tests {
             material: Default::default(),
         };
         let color = shade_intersection(
+            &empty_scene(),
             &s,
             &vec![light],
             &Point3::new(0.0, 0.0, 0.0),
@@ -242,6 +272,7 @@ mod tests {
             material: Default::default(),
         };
         let color = shade_intersection(
+            &empty_scene(),
             &s,
             &vec![light],
             &Point3::new(0.0, 0.0, 0.0),
@@ -266,7 +297,14 @@ mod tests {
             material: Default::default(),
         };
         let point = s.intersection(&r).map(|t| r.point_at(t)).unwrap();
-        let color = shade_intersection(&s, &vec![light], &point, &r, s.normal_at(point));
+        let color = shade_intersection(
+            &empty_scene(),
+            &s,
+            &vec![light],
+            &point,
+            &r,
+            s.normal_at(point),
+        );
         assert_relative_eq!(color.0, Vector3::new(1.9, 1.9, 1.9));
     }
 }

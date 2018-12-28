@@ -7,7 +7,8 @@ pub struct PointLight {
 }
 
 impl PointLight {
-    pub fn direction_from(&self, point: &Point3f) -> Vec3f {
-        (self.position - point).normalize()
+    pub fn direction_from(&self, point: &Point3f) -> (Float, Vec3f) {
+        let v = self.position - point;
+        (v.norm(), v.normalize())
     }
 }
