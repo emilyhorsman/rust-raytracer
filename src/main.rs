@@ -2,6 +2,7 @@
 extern crate derive_more;
 extern crate nalgebra as na;
 
+mod camera;
 mod color;
 mod image_output;
 mod intersections;
