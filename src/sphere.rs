@@ -1,19 +1,23 @@
 use na::*;
 
+use crate::color::*;
 use crate::intersections::*;
 use crate::model_transformation::*;
 use crate::ray::*;
 use crate::shape::*;
 use crate::types::*;
+use crate::material::*;
 
 pub struct Sphere {
     pub object_to_world_space: Projective3<Float>,
+    pub material: Material,
 }
 
 impl From<ModelTransformation> for Sphere {
     fn from(t: ModelTransformation) -> Self {
         Self {
             object_to_world_space: t.matrix(),
+            material: Default::default(),
         }
     }
 }
@@ -45,6 +49,14 @@ impl Shape for Sphere {
             * Vector4::new(object_normal.x, object_normal.y, object_normal.z, 0.0);
         world_normal.w = 0.0;
         world_normal.normalize().xyz()
+    }
+
+    fn color_at(&self, world_point: &Point3f) -> Color {
+        self.material.color
+    }
+
+    fn material(&self) -> &Material {
+        &self.material
     }
 }
 

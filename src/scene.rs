@@ -1,6 +1,7 @@
 use na::Point3;
 
 use crate::color::*;
+use crate::material::*;
 use crate::model_transformation::*;
 use crate::point_light::*;
 use crate::ray::*;
@@ -15,9 +16,13 @@ pub struct Scene {
 
 impl Default for Scene {
     fn default() -> Self {
-        let obj = Box::new(Sphere::from(
-            ModelTransformation::new().scale(0.5, 0.5, 0.5),
-        ));
+        let obj = Box::new(Sphere {
+            object_to_world_space: ModelTransformation::new().scale(0.5, 0.5, 0.5).matrix(),
+            material: Material {
+                color: Color::new(1.0, 0.2, 1.0),
+                ..Default::default()
+            },
+        });
         let light = PointLight {
             color: Color::new(1.0, 1.0, 1.0),
             position: Point3::new(-10.0, 10.0, -10.0),

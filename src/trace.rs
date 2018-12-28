@@ -4,6 +4,7 @@ use crate::material::*;
 use crate::point_light::*;
 use crate::ray::*;
 use crate::scene::*;
+use crate::shape::*;
 use crate::types::*;
 
 pub fn render(camera: &Camera, scene: &Scene, x: usize, y: usize) -> Color {
@@ -17,10 +18,7 @@ fn trace(scene: &Scene, ray: &Ray) -> Color {
         .map(|(t, obj)| (ray.point_at(t), obj))
     {
         Some((intersection_point, obj)) => shade_intersection(
-            &Material {
-                color: Color::new(1.0, 0.2, 1.0),
-                ..Default::default()
-            },
+            obj,
             &scene.lights,
             &intersection_point,
             &ray,
@@ -32,13 +30,13 @@ fn trace(scene: &Scene, ray: &Ray) -> Color {
 }
 
 fn shade_intersection(
-    material: &Material,
+    shape: &Shape,
     lights: &Vec<PointLight>,
     point: &Point3f,
     incoming_ray: &Ray,
     normal: Vec3f,
 ) -> Color {
-    let ambient = material.color * material.ambient;
+    let ambient = shape.color_at(point) * shape.material().ambient;
     let corrected_normal = if incoming_ray.is_inside(&normal) {
         -normal
     } else {
@@ -48,18 +46,18 @@ fn shade_intersection(
         + lights
             .iter()
             .fold(Color::new(0.0, 0.0, 0.0), |total, light| {
-                total + light_contribution(material, light, point, incoming_ray, &corrected_normal)
+                total + light_contribution(shape, light, point, incoming_ray, &corrected_normal)
             })
 }
 
 fn light_contribution(
-    material: &Material,
+    shape: &Shape,
     light: &PointLight,
     point: &Point3f,
     incoming_ray: &Ray,
     normal: &Vec3f,
 ) -> Color {
-    let effective_color = material.color.mix(light.color);
+    let effective_color = shape.color_at(point).mix(light.color);
     let shadow_direction = light.direction_from(point);
 
     let facing_ratio = shadow_direction.dot(&normal);
@@ -67,8 +65,14 @@ fn light_contribution(
         return Color::new(0.0, 0.0, 0.0);
     }
 
-    let diffuse = effective_color * material.diffuse * facing_ratio;
-    let specular = compute_reflection(material, light, incoming_ray, normal, &shadow_direction);
+    let diffuse = effective_color * shape.material().diffuse * facing_ratio;
+    let specular = compute_reflection(
+        shape.material(),
+        light,
+        incoming_ray,
+        normal,
+        &shadow_direction,
+    );
     diffuse + specular
 }
 
@@ -105,11 +109,9 @@ mod tests {
     use std::f64::consts::*;
 
     use approx::*;
-    use na::{Point3, Vector3};
+    use na::*;
 
     use super::*;
-    use crate::model_transformation::*;
-    use crate::shape::*;
     use crate::sphere::*;
 
     #[test]
@@ -122,8 +124,12 @@ mod tests {
             origin: Point3::new(0.0, 0.0, -5.0),
             direction: Vector3::new(0.0, 0.0, 1.0),
         };
+        let s = Sphere {
+            object_to_world_space: Projective3::identity(),
+            material: Default::default(),
+        };
         let color = shade_intersection(
-            &Default::default(),
+            &s,
             &vec![light],
             &Point3::new(0.0, 0.0, 0.0),
             &r,
@@ -145,8 +151,12 @@ mod tests {
             origin: Point3::new(0.0, 5.0, -5.0),
             direction: Vector3::new(0.0, FRAC_PI_4.sin(), FRAC_PI_4.sin()),
         };
+        let s = Sphere {
+            object_to_world_space: Projective3::identity(),
+            material: Default::default(),
+        };
         let color = shade_intersection(
-            &Default::default(),
+            &s,
             &vec![light],
             &Point3::new(0.0, 0.0, 0.0),
             &r,
@@ -167,8 +177,12 @@ mod tests {
             origin: Point3::new(0.0, 0.0, -5.0),
             direction: Vector3::new(0.0, 0.0, 1.0),
         };
+        let s = Sphere {
+            object_to_world_space: Projective3::identity(),
+            material: Default::default(),
+        };
         let color = shade_intersection(
-            &Default::default(),
+            &s,
             &vec![light],
             &Point3::new(0.0, 0.0, 0.0),
             &r,
@@ -191,8 +205,12 @@ mod tests {
             origin: Point3::new(0.0, -10.0, -10.0),
             direction: Vector3::new(0.0, FRAC_PI_4.sin(), FRAC_PI_4.sin()),
         };
+        let s = Sphere {
+            object_to_world_space: Projective3::identity(),
+            material: Default::default(),
+        };
         let color = shade_intersection(
-            &Default::default(),
+            &s,
             &vec![light],
             &Point3::new(0.0, 0.0, 0.0),
             &r,
@@ -219,8 +237,12 @@ mod tests {
             origin: Point3::new(0.0, 0.0, -5.0),
             direction: Vector3::new(0.0, 0.0, 1.0),
         };
+        let s = Sphere {
+            object_to_world_space: Projective3::identity(),
+            material: Default::default(),
+        };
         let color = shade_intersection(
-            &Default::default(),
+            &s,
             &vec![light],
             &Point3::new(0.0, 0.0, 0.0),
             &r,
@@ -239,15 +261,12 @@ mod tests {
             origin: Point3::new(0.0, 0.0, 0.0),
             direction: Vector3::new(0.0, 0.0, 1.0),
         };
-        let s = Sphere::from(ModelTransformation::new());
+        let s = Sphere {
+            object_to_world_space: Projective3::identity(),
+            material: Default::default(),
+        };
         let point = s.intersection(&r).map(|t| r.point_at(t)).unwrap();
-        let color = shade_intersection(
-            &Default::default(),
-            &vec![light],
-            &point,
-            &r,
-            s.normal_at(point),
-        );
+        let color = shade_intersection(&s, &vec![light], &point, &r, s.normal_at(point));
         assert_relative_eq!(color.0, Vector3::new(1.9, 1.9, 1.9));
     }
 }

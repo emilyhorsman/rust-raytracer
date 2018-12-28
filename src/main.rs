@@ -25,6 +25,7 @@ use na::*;
 use crate::camera::*;
 use crate::color::*;
 use crate::image_output::*;
+use crate::material::*;
 use crate::model_transformation::*;
 use crate::point_light::*;
 use crate::scene::*;
@@ -34,11 +35,16 @@ use crate::view_transformation::*;
 
 fn main() {
     let mut scene: Scene = Default::default();
-    scene.objects.push(Box::new(Sphere::from(
-        ModelTransformation::new()
+    scene.objects.push(Box::new(Sphere {
+        object_to_world_space: ModelTransformation::new()
             .scale(0.2, 0.1, 0.2)
-            .translate(0.5, 0.0, -2.0),
-    )));
+            .translate(0.5, 0.0, -2.0)
+            .matrix(),
+        material: Material {
+            color: Color::new(1.0, 0.2, 1.0),
+            ..Default::default()
+        },
+    }));
     scene.lights.push(PointLight {
         color: Color::new(0.5, 0.5, 0.5),
         position: Point3::new(10.0, 10.0, -10.0),
