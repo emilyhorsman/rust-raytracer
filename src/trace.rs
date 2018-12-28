@@ -1,3 +1,4 @@
+use crate::camera::*;
 use crate::color::*;
 use crate::material::*;
 use crate::point_light::*;
@@ -5,7 +6,12 @@ use crate::ray::*;
 use crate::scene::*;
 use crate::types::*;
 
-pub fn trace(scene: &Scene, ray: &Ray) -> Color {
+pub fn render(camera: &Camera, scene: &Scene, x: usize, y: usize) -> Color {
+    let primary_ray = camera.ray_for_pixel(x, y);
+    trace(scene, &primary_ray)
+}
+
+fn trace(scene: &Scene, ray: &Ray) -> Color {
     match scene
         .intersection(&ray)
         .map(|(t, obj)| (ray.point_at(t), obj))

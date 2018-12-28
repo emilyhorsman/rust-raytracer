@@ -3,9 +3,9 @@ use na::*;
 use crate::types::*;
 
 pub struct ViewTransformation {
-    from: Point3f,
-    to: Point3f,
-    up: Vec3f,
+    pub from: Point3f,
+    pub to: Point3f,
+    pub up: Vec3f,
 }
 
 impl Default for ViewTransformation {

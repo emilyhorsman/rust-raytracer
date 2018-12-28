@@ -4,10 +4,10 @@ use crate::ray::*;
 use crate::types::*;
 
 pub struct Camera {
-    canvas_width: usize,
-    canvas_height: usize,
-    field_of_view_radians: Float,
-    transform: Projective3<Float>,
+    pub canvas_width: usize,
+    pub canvas_height: usize,
+    pub field_of_view_radians: Float,
+    pub transform: Projective3<Float>,
 }
 
 impl Camera {
