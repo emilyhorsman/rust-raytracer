@@ -1,7 +1,7 @@
 use crate::color::*;
+use crate::material::*;
 use crate::ray::*;
 use crate::types::*;
-use crate::material::*;
 
 pub trait Shape {
     fn intersection(&self, ray: &Ray) -> Option<Float>;

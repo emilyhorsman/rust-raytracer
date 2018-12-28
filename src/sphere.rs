@@ -2,11 +2,11 @@ use na::*;
 
 use crate::color::*;
 use crate::intersections::*;
+use crate::material::*;
 use crate::model_transformation::*;
 use crate::ray::*;
 use crate::shape::*;
 use crate::types::*;
-use crate::material::*;
 
 pub struct Sphere {
     pub object_to_world_space: Projective3<Float>,

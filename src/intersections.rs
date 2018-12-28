@@ -18,6 +18,14 @@ pub fn ray_sphere_intersection(ray: &Ray) -> Option<(Float, Float)> {
     Some(((-b - d) / (2.0 * a), (-b + d) / (2.0 * a)))
 }
 
+pub fn ray_plane_intersection(ray: &Ray) -> Option<Float> {
+    if ray.direction.y.abs() <= EPSILON {
+        return None;
+    }
+
+    Some(-ray.origin.y / ray.direction.y)
+}
+
 #[cfg(test)]
 mod tests {
     use approx::assert_relative_eq;
@@ -76,5 +84,43 @@ mod tests {
         let (t1, t2) = ray_sphere_intersection(&r).unwrap();
         assert_relative_eq!(t1, -6.0);
         assert_relative_eq!(t2, -4.0);
+    }
+
+    #[test]
+    fn it_does_not_intersect_when_parallel_with_plane() {
+        let r = Ray {
+            origin: Point3::new(0.0, 10.0, 0.0),
+            direction: Vector3::new(0.0, 0.0, 1.0),
+        };
+        assert!(ray_plane_intersection(&r).is_none());
+    }
+
+    #[test]
+    fn it_does_not_intersect_when_coplanar() {
+        let r = Ray {
+            origin: Point3::new(0.0, 0.0, 0.0),
+            direction: Vector3::new(0.0, 0.0, 1.0),
+        };
+        assert!(ray_plane_intersection(&r).is_none());
+    }
+
+    #[test]
+    fn it_intersects_plane_from_above() {
+        let r = Ray {
+            origin: Point3::new(0.0, 1.0, 0.0),
+            direction: Vector3::new(0.0, -1.0, 0.0),
+        };
+        let t = ray_plane_intersection(&r).unwrap();
+        assert_relative_eq!(t, 1.0);
+    }
+
+    #[test]
+    fn it_intersects_plane_from_below() {
+        let r = Ray {
+            origin: Point3::new(0.0, -1.0, 0.0),
+            direction: Vector3::new(0.0, 1.0, 0.0),
+        };
+        let t = ray_plane_intersection(&r).unwrap();
+        assert_relative_eq!(t, 1.0);
     }
 }

@@ -8,6 +8,7 @@ mod image_output;
 mod intersections;
 mod material;
 mod model_transformation;
+mod plane;
 mod point_light;
 mod ray;
 mod scene;
@@ -27,6 +28,7 @@ use crate::color::*;
 use crate::image_output::*;
 use crate::material::*;
 use crate::model_transformation::*;
+use crate::plane::*;
 use crate::point_light::*;
 use crate::scene::*;
 use crate::sphere::*;
@@ -45,6 +47,26 @@ fn main() {
             ..Default::default()
         },
     }));
+    scene.objects.push(Box::new(Plane {
+        object_to_world_space: ModelTransformation::new()
+            .translate(0.0, -5.0, 0.0)
+            .matrix(),
+        material: Default::default(),
+    }));
+    scene.objects.push(Box::new(Plane {
+        object_to_world_space: ModelTransformation::new()
+            .translate(15.0, 0.0, 0.0)
+            .rotate_z(FRAC_PI_2)
+            .matrix(),
+        material: Default::default(),
+    }));
+    scene.objects.push(Box::new(Plane {
+        object_to_world_space: ModelTransformation::new()
+            .translate(-15.0, 0.0, 0.0)
+            .rotate_z(FRAC_PI_2)
+            .matrix(),
+        material: Default::default(),
+    }));
     scene.lights.push(PointLight {
         color: Color::new(0.5, 0.5, 0.5),
         position: Point3::new(10.0, 10.0, -10.0),
@@ -53,9 +75,9 @@ fn main() {
     let camera = Camera {
         canvas_width: 500,
         canvas_height: 400,
-        field_of_view_radians: FRAC_PI_6,
+        field_of_view_radians: FRAC_PI_4,
         transform: ViewTransformation {
-            from: Point3::new(0.0, 2.0, -5.0),
+            from: Point3::new(0.0, 0.0, -5.0),
             to: Point3::new(0.0, 0.0, -1.0),
             up: Vector3::new(0.0, 1.0, 0.0),
         }
