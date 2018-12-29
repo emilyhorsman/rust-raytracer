@@ -7,7 +7,7 @@ pub struct Camera {
     pub canvas_width: usize,
     pub canvas_height: usize,
     pub field_of_view_radians: Float,
-    pub transform: Projective3<Float>,
+    pub transform: Isometry3<Float>,
 }
 
 impl Camera {
@@ -64,7 +64,7 @@ mod tests {
             canvas_width: 200,
             canvas_height: 125,
             field_of_view_radians: FRAC_PI_2,
-            transform: Projective3::identity(),
+            transform: Isometry3::identity(),
         };
         assert_relative_eq!(c.compute_pixel_size().2, 0.01);
     }
@@ -75,7 +75,7 @@ mod tests {
             canvas_width: 125,
             canvas_height: 200,
             field_of_view_radians: FRAC_PI_2,
-            transform: Projective3::identity(),
+            transform: Isometry3::identity(),
         };
         assert_relative_eq!(c.compute_pixel_size().2, 0.01);
     }
@@ -86,7 +86,7 @@ mod tests {
             canvas_width: 201,
             canvas_height: 101,
             field_of_view_radians: FRAC_PI_2,
-            transform: Projective3::identity(),
+            transform: Isometry3::identity(),
         };
         let r = c.ray_for_pixel(100, 50);
         assert_relative_eq!(r.origin, Point3::new(0.0, 0.0, 0.0));
@@ -99,7 +99,7 @@ mod tests {
             canvas_width: 201,
             canvas_height: 101,
             field_of_view_radians: FRAC_PI_2,
-            transform: Projective3::identity(),
+            transform: Isometry3::identity(),
         };
         let r = c.ray_for_pixel(0, 0);
         assert_relative_eq!(r.origin, Point3::new(0.0, 0.0, 0.0));
@@ -112,9 +112,9 @@ mod tests {
 
     #[test]
     fn it_computes_ray_with_camera_transform() {
-        let t = Rotation3::from_axis_angle(&Vector3::y_axis(), FRAC_PI_4)
+        let t = UnitQuaternion::from_axis_angle(&Vector3::y_axis(), FRAC_PI_4)
             * Translation3::from(Vector3::new(0.0, -2.0, 5.0))
-            * Projective3::identity();
+            * Isometry3::identity();
         let c = Camera {
             canvas_width: 201,
             canvas_height: 101,

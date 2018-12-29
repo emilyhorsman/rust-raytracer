@@ -36,11 +36,14 @@ use crate::trace::*;
 use crate::view_transformation::*;
 
 fn main() {
-    let mut scene: Scene = Default::default();
+    let mut scene = Scene {
+        objects: vec![],
+        lights: vec![],
+    };
     scene.objects.push(Box::new(Sphere {
         object_to_world_space: ModelTransformation::new()
-            .scale(0.2, 0.1, 0.2)
-            .translate(0.5, 0.0, -2.0)
+            .scale(0.5, 0.5, 0.5)
+            .translate(0.0, 0.0, 0.0)
             .matrix(),
         material: Material {
             color: Color::new(1.0, 0.2, 1.0),
@@ -49,7 +52,7 @@ fn main() {
     }));
     scene.objects.push(Box::new(Plane {
         object_to_world_space: ModelTransformation::new()
-            .translate(0.0, -1.5, 0.0)
+            .translate(0.0, -1.0, 0.0)
             .matrix(),
         material: Default::default(),
     }));
@@ -69,7 +72,7 @@ fn main() {
     }));
     scene.lights.push(PointLight {
         color: Color::new(0.5, 0.5, 0.5),
-        position: Point3::new(1.0, 1.0, -5.0),
+        position: Point3::new(0.0, 2.0, 0.0),
     });
 
     let camera = Camera {
@@ -79,7 +82,7 @@ fn main() {
         transform: ViewTransformation {
             from: Point3::new(0.0, 3.0, -5.0),
             to: Point3::new(0.0, 0.0, -1.0),
-            up: Vector3::new(0.0, 1.0, 0.0),
+            up: Vector3::y(),
         }
         .matrix(),
     };
