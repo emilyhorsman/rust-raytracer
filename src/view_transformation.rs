@@ -72,6 +72,10 @@ mod tests {
             -0.50709, 0.50709, 0.67612, -2.36643, 0.76772, 0.60609, 0.12122, -2.82843, -0.35857,
             0.59761, -0.71714, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000,
         );
-        assert!(relative_eq!(m.matrix().to_homogeneous(), correct, epsilon = 0.05));
+        assert!(relative_eq!(
+            m.matrix().to_homogeneous(),
+            correct,
+            epsilon = 0.05
+        ));
     }
 }

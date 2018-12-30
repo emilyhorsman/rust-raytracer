@@ -45,7 +45,11 @@ impl Shape for Sphere {
         let object_point = self.object_to_world_space.inverse() * world_point;
         let object_normal = object_point - Point3::new(0.0, 0.0, 0.0);
         // I don't really understand why this must be the inverse transpose.
-        let mut world_normal = self.object_to_world_space.inverse().matrix().transpose()
+        let mut world_normal = self
+            .object_to_world_space
+            .inverse()
+            .to_homogeneous()
+            .transpose()
             * Vector4::new(object_normal.x, object_normal.y, object_normal.z, 0.0);
         world_normal.w = 0.0;
         world_normal.normalize().xyz()

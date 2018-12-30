@@ -70,7 +70,7 @@ fn light_contribution(
 ) -> Color {
     let (distance, shadow_direction) = light.direction_from(point);
     let shadow_ray = Ray {
-        origin: *point + normal * 1e-8,
+        origin: *point + normal * BIAS,
         direction: shadow_direction,
     };
     if scene.is_occluded(&shadow_ray, distance) {

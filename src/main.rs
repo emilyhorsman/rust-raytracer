@@ -33,46 +33,45 @@ use crate::point_light::*;
 use crate::scene::*;
 use crate::sphere::*;
 use crate::trace::*;
+use crate::types::*;
 use crate::view_transformation::*;
+
+fn make_standard_material(r: Float, g: Float, b: Float) -> Material {
+    Material {
+        color: Color::new(r, g, b),
+        ..Default::default()
+    }
+}
 
 fn main() {
     let mut scene = Scene {
         objects: vec![],
         lights: vec![],
     };
-    scene.objects.push(Box::new(Sphere {
-        object_to_world_space: ModelTransformation::new()
-            .scale(0.5, 0.5, 0.5)
-            .translate(0.0, 0.0, 0.0)
-            .matrix(),
-        material: Material {
-            color: Color::new(1.0, 0.2, 1.0),
-            ..Default::default()
-        },
-    }));
-    scene.objects.push(Box::new(Plane {
-        object_to_world_space: ModelTransformation::new()
-            .translate(0.0, -1.0, 0.0)
-            .matrix(),
-        material: Default::default(),
-    }));
-    scene.objects.push(Box::new(Plane {
-        object_to_world_space: ModelTransformation::new()
-            .translate(15.0, 0.0, 0.0)
-            .rotate_z(FRAC_PI_2)
-            .matrix(),
-        material: Default::default(),
-    }));
-    scene.objects.push(Box::new(Plane {
-        object_to_world_space: ModelTransformation::new()
-            .translate(-15.0, 0.0, 0.0)
-            .rotate_z(FRAC_PI_2)
-            .matrix(),
-        material: Default::default(),
-    }));
+    scene.objects.push(Box::new(Plane::floor(
+        -3.0,
+        make_standard_material(0.454902, 0.72549, 1.0),
+    )));
+    scene.objects.push(Box::new(Plane::left_wall(
+        -3.0,
+        make_standard_material(0.0, 0.721569, 0.580392),
+    )));
+    scene.objects.push(Box::new(Plane::right_wall(
+        3.0,
+        make_standard_material(1.0, 0.917647, 0.654902),
+    )));
+    scene.objects.push(Box::new(Plane::back_wall(
+        2.0,
+        make_standard_material(0.333333, 0.937255, 0.768627),
+    )));
+    scene.objects.push(Box::new(Plane::ceiling(
+        3.0,
+        make_standard_material(0.882353, 0.439216, 0.333333),
+    )));
+
     scene.lights.push(PointLight {
         color: Color::new(0.5, 0.5, 0.5),
-        position: Point3::new(0.0, 2.0, 0.0),
+        position: Point3::new(0.0, 1.5, -2.0),
     });
 
     let camera = Camera {
@@ -80,8 +79,8 @@ fn main() {
         canvas_height: 400,
         field_of_view_radians: FRAC_PI_2,
         transform: ViewTransformation {
-            from: Point3::new(0.0, 3.0, -5.0),
-            to: Point3::new(0.0, 0.0, -1.0),
+            from: Point3::new(0.0, 0.0, -5.0),
+            to: Point3::new(0.0, 0.0, 0.0),
             up: Vector3::y(),
         }
         .matrix(),
