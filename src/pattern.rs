@@ -18,11 +18,12 @@ impl Pattern for SolidPattern {
 pub struct StripePattern {
     pub a: Color,
     pub b: Color,
+    pub object_to_pattern_space: Projective3<Float>,
 }
 
 impl Pattern for StripePattern {
     fn color_at(&self, point: Point3f) -> Color {
-        let pattern_point = Similarity3::from_scaling(10.0) * point;
+        let pattern_point = self.object_to_pattern_space * point;
         if (pattern_point.x as i64) % 2 == 0 {
             self.a
         } else {

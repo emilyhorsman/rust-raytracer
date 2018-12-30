@@ -84,6 +84,9 @@ fn main() {
             color: Box::new(StripePattern {
                 a: Color::new(1.0, 0.2, 1.0),
                 b: Color::new(1.0, 1.0, 1.0),
+                object_to_pattern_space: ModelTransformation::new()
+                    .scale(10.0, 10.0, 10.0)
+                    .matrix(),
             }),
             ..Material::default()
         },
