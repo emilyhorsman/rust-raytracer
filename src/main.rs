@@ -10,6 +10,7 @@ mod image_output;
 mod intersections;
 mod material;
 mod model_transformation;
+mod pattern;
 mod plane;
 mod point_light;
 mod ray;
@@ -29,16 +30,19 @@ use crate::camera::*;
 use crate::color::*;
 use crate::image_output::*;
 use crate::material::*;
+use crate::model_transformation::*;
+use crate::pattern::*;
 use crate::plane::*;
 use crate::point_light::*;
 use crate::scene::*;
+use crate::sphere::*;
 use crate::trace::*;
 use crate::types::*;
 use crate::view_transformation::*;
 
 fn make_standard_material(r: Float, g: Float, b: Float) -> Material {
     Material {
-        color: Color::new(r, g, b),
+        color: Box::new(SolidPattern(Color::new(r, g, b))),
         ..Material::default()
     }
 }
@@ -62,7 +66,7 @@ fn main() {
         make_standard_material(1.0, 0.917647, 0.654902),
     )));
     scene.objects.push(Box::new(Plane::back_wall(
-        2.0,
+        4.0,
         make_standard_material(0.333333, 0.937255, 0.768627),
     )));
     scene.objects.push(Box::new(Plane::ceiling(
@@ -70,9 +74,28 @@ fn main() {
         make_standard_material(0.882353, 0.439216, 0.333333),
     )));
 
+    scene.objects.push(Box::new(Sphere {
+        object_to_world_space: ModelTransformation::new()
+            .scale(2.0, 2.0, 2.0)
+            .rotate_z(-FRAC_PI_4)
+            .rotate_y(-PI / 3.0)
+            .matrix(),
+        material: Material {
+            color: Box::new(StripePattern {
+                a: Color::new(1.0, 0.2, 1.0),
+                b: Color::new(1.0, 1.0, 1.0),
+            }),
+            ..Material::default()
+        },
+    }));
+
     scene.lights.push(PointLight {
-        color: Color::new(0.5, 0.5, 0.5),
-        position: Point3::new(0.0, 1.5, -2.0),
+        color: Color::new(1.0, 1.0, 1.0),
+        position: Point3::new(-1.0, -1.0, -4.0),
+    });
+    scene.lights.push(PointLight {
+        color: Color::new(1.0, 1.0, 1.0),
+        position: Point3::new(1.0, 0.0, -10.0),
     });
 
     let camera = Camera {
@@ -80,7 +103,7 @@ fn main() {
         canvas_height: 400,
         field_of_view_radians: FRAC_PI_2,
         transform: ViewTransformation {
-            from: Point3::new(0.0, 0.0, -5.0),
+            from: Point3::new(0.0, 1.0, -5.0),
             to: Point3::new(0.0, 0.0, 0.0),
             up: Vector3::y(),
         }

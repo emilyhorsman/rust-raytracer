@@ -78,8 +78,9 @@ impl Shape for Plane {
         self.object_to_world_space * Vector3::y()
     }
 
-    fn color_at(&self, _: &Point3f) -> Color {
-        self.material.color
+    fn color_at(&self, world_point: &Point3f) -> Color {
+        let object_point = self.object_to_world_space.inverse() * world_point;
+        self.material.color.color_at(object_point)
     }
 
     fn material(&self) -> &Material {

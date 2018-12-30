@@ -3,6 +3,7 @@ use na::Point3;
 use crate::color::*;
 use crate::material::*;
 use crate::model_transformation::*;
+use crate::pattern::*;
 use crate::point_light::*;
 use crate::ray::*;
 use crate::shape::*;
@@ -19,7 +20,7 @@ impl Default for Scene {
         let obj = Box::new(Sphere {
             object_to_world_space: ModelTransformation::new().matrix(),
             material: Material {
-                color: Color::new(1.0, 0.2, 1.0),
+                color: Box::new(SolidPattern(Color::new(1.0, 0.2, 1.0))),
                 ..Material::default()
             },
         });
