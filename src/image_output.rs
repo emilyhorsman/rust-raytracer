@@ -6,9 +6,9 @@ use crate::color::*;
 
 /// Writes an Image to a file with the Netpbm graphics format.
 ///
-/// https://en.wikipedia.org/wiki/Netpbm_format
+/// <https://en.wikipedia.org/wiki/Netpbm_format>
 ///
-/// One can use `convert` from ImageMagick to make this something friendlier,
+/// One can use `convert` from `ImageMagick` to make this something friendlier,
 /// but Preview.app on macOS does view these just fine.
 #[allow(clippy::ptr_arg)]
 pub fn write_ppm(path: &Path, image: &Image) -> std::io::Result<()> {

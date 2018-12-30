@@ -14,9 +14,9 @@ impl Color {
     pub fn to_u8_array(&self) -> [u8; 3] {
         let Color(v) = self;
         [
-            (v.x * 255.0) as u8,
-            (v.y * 255.0) as u8,
-            (v.z * 255.0) as u8,
+            (v.x * 255.0).round() as u8,
+            (v.y * 255.0).round() as u8,
+            (v.z * 255.0).round() as u8,
         ]
     }
 
@@ -29,7 +29,7 @@ impl Color {
 
     pub fn clamp(self) -> Self {
         let Color(v) = self;
-        Color::new(v.x.min(1.0), v.y.min(1.0), v.z.min(1.0))
+        Self::new(v.x.min(1.0), v.y.min(1.0), v.z.min(1.0))
     }
 }
 

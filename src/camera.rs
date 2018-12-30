@@ -4,8 +4,8 @@ use crate::ray::*;
 use crate::types::*;
 
 pub struct Camera {
-    pub canvas_width: usize,
-    pub canvas_height: usize,
+    pub canvas_width: u32,
+    pub canvas_height: u32,
     pub field_of_view_radians: Float,
     pub transform: Isometry3<Float>,
 }
@@ -14,7 +14,7 @@ impl Camera {
     /// Computes the size of a pixel in world space units.
     pub fn compute_pixel_size(&self) -> (Float, Float, Float) {
         let half_view = (self.field_of_view_radians / 2.0).tan();
-        let aspect_ratio = self.canvas_width as f64 / self.canvas_height as f64;
+        let aspect_ratio = f64::from(self.canvas_width) / f64::from(self.canvas_height);
         let (half_width, half_height) = if aspect_ratio >= 1.0 {
             (half_view, half_view / aspect_ratio)
         } else {
@@ -23,15 +23,15 @@ impl Camera {
         (
             half_width,
             half_height,
-            half_width * 2.0 / self.canvas_width as f64,
+            half_width * 2.0 / f64::from(self.canvas_width),
         )
     }
 
-    pub fn ray_for_pixel(&self, pixel_x: usize, pixel_y: usize) -> Ray {
+    pub fn ray_for_pixel(&self, pixel_x: u32, pixel_y: u32) -> Ray {
         let (half_width, half_height, pixel_size) = self.compute_pixel_size();
         // Center the pixel.
-        let x_offset = (pixel_x as f64 + 0.5) * pixel_size;
-        let y_offset = (pixel_y as f64 + 0.5) * pixel_size;
+        let x_offset = (f64::from(pixel_x) + 0.5) * pixel_size;
+        let y_offset = (f64::from(pixel_y) + 0.5) * pixel_size;
 
         let world_x = half_width - x_offset;
         let world_y = half_height - y_offset;

@@ -7,7 +7,7 @@ use crate::scene::*;
 use crate::shape::*;
 use crate::types::*;
 
-pub fn render(camera: &Camera, scene: &Scene, x: usize, y: usize) -> Color {
+pub fn render(camera: &Camera, scene: &Scene, x: u32, y: u32) -> Color {
     let primary_ray = camera.ray_for_pixel(x, y);
     trace(scene, &primary_ray)
 }

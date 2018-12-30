@@ -20,7 +20,7 @@ impl Default for Scene {
             object_to_world_space: ModelTransformation::new().matrix(),
             material: Material {
                 color: Color::new(1.0, 0.2, 1.0),
-                ..Default::default()
+                ..Material::default()
             },
         });
         let light = PointLight {

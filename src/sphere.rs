@@ -17,7 +17,7 @@ impl From<ModelTransformation> for Sphere {
     fn from(t: ModelTransformation) -> Self {
         Self {
             object_to_world_space: t.matrix(),
-            material: Default::default(),
+            material: Material::default(),
         }
     }
 }

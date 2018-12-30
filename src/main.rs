@@ -1,3 +1,4 @@
+#![warn(clippy::pedantic)]
 #![allow(clippy::unreadable_literal)]
 #[macro_use]
 extern crate derive_more;
@@ -38,7 +39,7 @@ use crate::view_transformation::*;
 fn make_standard_material(r: Float, g: Float, b: Float) -> Material {
     Material {
         color: Color::new(r, g, b),
-        ..Default::default()
+        ..Material::default()
     }
 }
 
@@ -86,18 +87,18 @@ fn main() {
         .matrix(),
     };
 
-    let mut image: Image = Vec::with_capacity(camera.canvas_width);
+    let mut image: Image = Vec::with_capacity(camera.canvas_width as usize);
     for i in 0..camera.canvas_width {
-        image.push(Vec::with_capacity(camera.canvas_height));
+        image.push(Vec::with_capacity(camera.canvas_height as usize));
         for _ in 0..camera.canvas_height {
-            image[i].push(Color::new(0.0, 0.0, 0.0));
+            image[i as usize].push(Color::new(0.0, 0.0, 0.0));
         }
     }
 
     for y in 0..camera.canvas_height {
         #[allow(clippy::needless_range_loop)]
         for x in 0..camera.canvas_width {
-            image[x][y] = render(&camera, &scene, x, y);
+            image[x as usize][y as usize] = render(&camera, &scene, x, y);
         }
     }
 
