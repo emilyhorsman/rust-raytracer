@@ -67,7 +67,14 @@ fn main() {
     )));
     scene.objects.push(Box::new(Plane::back_wall(
         4.0,
-        make_standard_material(0.333333, 0.937255, 0.768627),
+        Material {
+            color: Box::new(CheckersPattern {
+                a: Color::new(1.0, 1.0, 1.0),
+                b: Color::new(0.0, 0.0, 0.0),
+                object_to_pattern_space: Projective3::identity(),
+            }),
+            ..Material::default()
+        },
     )));
     scene.objects.push(Box::new(Plane::ceiling(
         3.0,
@@ -76,14 +83,14 @@ fn main() {
 
     scene.objects.push(Box::new(Sphere {
         object_to_world_space: ModelTransformation::new()
-            .scale(2.0, 2.0, 2.0)
+            .translate(0.0, 0.0, -1.0)
             .rotate_z(-FRAC_PI_4)
             .rotate_y(-PI / 3.0)
             .matrix(),
         material: Material {
-            color: Box::new(StripePattern {
+            color: Box::new(CheckersPattern {
                 a: Color::new(1.0, 0.2, 1.0),
-                b: Color::new(1.0, 1.0, 1.0),
+                b: Color::new(1.0, 0.0, 0.0),
                 object_to_pattern_space: ModelTransformation::new()
                     .scale(10.0, 10.0, 10.0)
                     .matrix(),

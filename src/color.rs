@@ -2,7 +2,7 @@ use na::Vector3;
 
 use crate::types::*;
 
-#[derive(Clone, Copy, Debug, PartialEq, Add, AddAssign, Mul)]
+#[derive(Clone, Copy, Debug, PartialEq, Add, AddAssign, Mul, Sub)]
 pub struct Color(pub Vec3f);
 
 impl Color {
