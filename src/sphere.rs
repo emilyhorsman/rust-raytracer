@@ -1,3 +1,5 @@
+use std::f64::consts::*;
+
 use na::*;
 
 use crate::color::*;
@@ -57,7 +59,14 @@ impl Shape for Sphere {
 
     fn color_at(&self, world_point: &Point3f) -> Color {
         let object_point = self.object_to_world_space.inverse() * world_point;
-        self.material.color.color_at(object_point)
+        // TODO: UV mapping here does not support general ellipsoids, only spheres
+        // (w/ radius 1 on all axes).
+        let theta = (-object_point.z).atan2(object_point.x);
+        let u = (theta + PI) / (2.0 * PI);
+        let phi = (-object_point.y).acos();
+        let v = phi / PI;
+        let uv_mapped_point = Point3::new(u, 0.0, v);
+        self.material.color.color_at(uv_mapped_point)
     }
 
     fn material(&self) -> &Material {
@@ -67,8 +76,6 @@ impl Shape for Sphere {
 
 #[cfg(test)]
 mod tests {
-    use std::f64::consts::*;
-
     use approx::assert_relative_eq;
 
     use super::*;

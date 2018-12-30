@@ -111,7 +111,7 @@ fn main() {
     let camera = Camera {
         canvas_width: 500,
         canvas_height: 400,
-        field_of_view_radians: FRAC_PI_2,
+        field_of_view_radians: FRAC_PI_4,
         transform: ViewTransformation {
             from: Point3::new(0.0, 1.0, -5.0),
             to: Point3::new(0.0, 0.0, 0.0),

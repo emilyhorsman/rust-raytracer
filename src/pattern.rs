@@ -56,7 +56,9 @@ pub struct RingPattern {
 impl Pattern for RingPattern {
     fn color_at(&self, point: Point3f) -> Color {
         let pattern_point = self.object_to_pattern_space * point;
-        let k = (pattern_point.x.powf(2.0) + pattern_point.z.powf(2.0)).sqrt().floor();
+        let k = (pattern_point.x.powf(2.0) + pattern_point.z.powf(2.0))
+            .sqrt()
+            .floor();
         if k as i64 % 2 == 0 {
             self.a
         } else {
