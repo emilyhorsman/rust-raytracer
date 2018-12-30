@@ -33,7 +33,7 @@ fn trace(scene: &Scene, ray: &Ray) -> Color {
 fn shade_intersection(
     scene: &Scene,
     shape: &Shape,
-    lights: &Vec<PointLight>,
+    lights: &[PointLight],
     point: &Point3f,
     incoming_ray: &Ray,
     normal: Vec3f,

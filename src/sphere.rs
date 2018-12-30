@@ -55,7 +55,7 @@ impl Shape for Sphere {
         world_normal.normalize().xyz()
     }
 
-    fn color_at(&self, world_point: &Point3f) -> Color {
+    fn color_at(&self, _: &Point3f) -> Color {
         self.material.color
     }
 

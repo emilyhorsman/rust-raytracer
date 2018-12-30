@@ -43,10 +43,7 @@ impl Camera {
         let origin = inv * Point3::new(0.0, 0.0, 0.0);
         let direction = (pixel - origin).normalize();
 
-        Ray {
-            origin: origin,
-            direction: direction,
-        }
+        Ray { origin, direction }
     }
 }
 

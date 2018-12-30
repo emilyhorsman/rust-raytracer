@@ -12,6 +12,7 @@ pub struct ModelTransformation {
 
 macro_rules! make_rotate_fn {
     ( $name:ident ) => {
+        #[allow(dead_code)]
         pub fn $name(&self, angle: Float) -> Self {
             Self {
                 $name: angle,
@@ -36,6 +37,7 @@ impl ModelTransformation {
     make_rotate_fn!(rotate_y);
     make_rotate_fn!(rotate_z);
 
+    #[allow(dead_code)]
     pub fn scale(&self, x: Float, y: Float, z: Float) -> Self {
         Self {
             scale: Vector4::new(x, y, z, 1.0),
@@ -43,6 +45,7 @@ impl ModelTransformation {
         }
     }
 
+    #[allow(dead_code)]
     pub fn translate(&self, x: Float, y: Float, z: Float) -> Self {
         Self {
             translate: Vector3::new(x, y, z),

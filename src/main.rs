@@ -1,3 +1,4 @@
+#![allow(clippy::unreadable_literal)]
 #[macro_use]
 extern crate derive_more;
 extern crate nalgebra as na;
@@ -27,11 +28,9 @@ use crate::camera::*;
 use crate::color::*;
 use crate::image_output::*;
 use crate::material::*;
-use crate::model_transformation::*;
 use crate::plane::*;
 use crate::point_light::*;
 use crate::scene::*;
-use crate::sphere::*;
 use crate::trace::*;
 use crate::types::*;
 use crate::view_transformation::*;
@@ -48,6 +47,7 @@ fn main() {
         objects: vec![],
         lights: vec![],
     };
+
     scene.objects.push(Box::new(Plane::floor(
         -3.0,
         make_standard_material(0.454902, 0.72549, 1.0),
@@ -95,6 +95,7 @@ fn main() {
     }
 
     for y in 0..camera.canvas_height {
+        #[allow(clippy::needless_range_loop)]
         for x in 0..camera.canvas_width {
             image[x][y] = render(&camera, &scene, x, y);
         }

@@ -10,6 +10,7 @@ use crate::color::*;
 ///
 /// One can use `convert` from ImageMagick to make this something friendlier,
 /// but Preview.app on macOS does view these just fine.
+#[allow(clippy::ptr_arg)]
 pub fn write_ppm(path: &Path, image: &Image) -> std::io::Result<()> {
     let width = image.len();
     let height = image[0].len();
@@ -25,8 +26,8 @@ pub fn write_ppm(path: &Path, image: &Image) -> std::io::Result<()> {
     }
 
     for y in 0..height {
-        for x in 0..width {
-            let buf = image[x][y].to_u8_array();
+        for col in image.iter().take(width) {
+            let buf = col[y].to_u8_array();
             let result = file.write_all(&buf);
             if result.is_err() {
                 return result;

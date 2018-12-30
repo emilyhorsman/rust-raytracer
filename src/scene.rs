@@ -67,8 +67,6 @@ impl Scene {
 
 #[cfg(test)]
 mod tests {
-    use approx::*;
-
     use super::*;
 
     fn setup(p: Point3f) -> (Scene, Float, Ray) {
