@@ -46,13 +46,20 @@ impl Shape for Sphere {
     fn normal_at(&self, world_point: Point3f) -> Vec3f {
         let object_point = self.object_to_world_space.inverse() * world_point;
         let object_normal = object_point - Point3::new(0.0, 0.0, 0.0);
-        // I don't really understand why this must be the inverse transpose.
+        // We want to invert the scaling component of the object to world space transformation
+        // applied the normal direction vector. The inverse of any rotation matrix is its
+        // transpose. Any matrix composed of rotation and scaling matrices can be orthogonally
+        // diagonalized meaning that the transpose(inv(mat)) will invert the diagonal matrix
+        // (the scaling component) and leave the rotation matrices.
         let mut world_normal = self
             .object_to_world_space
             .inverse()
             .to_homogeneous()
             .transpose()
             * Vector4::new(object_normal.x, object_normal.y, object_normal.z, 0.0);
+        // However, matrices with a translation component muck up the orthogonal
+        // diagonalization a bit, so we zero the w component of the normal before
+        // normalizing.
         world_normal.w = 0.0;
         world_normal.normalize().xyz()
     }
@@ -112,10 +119,14 @@ mod tests {
 
     #[test]
     fn it_computes_normal_for_scaled_sphere() {
-        let t = ModelTransformation::new()
-            .scale(1.0, 0.5, 1.0)
-            .rotate_z(PI / 5.0);
-        let sphere = Sphere::from(t);
+        let t = Affine3::from_matrix_unchecked(Matrix::from_diagonal(&Vector4::new(
+            1.0, 0.5, 1.0, 1.0,
+        ))) * Rotation3::from_axis_angle(&Vector3::z_axis(), PI / 5.0)
+            * Projective3::identity();
+        let sphere = Sphere {
+            object_to_world_space: t,
+            material: Material::default(),
+        };
         assert_relative_eq!(
             sphere.normal_at(Point3::new(0.0, (2.0).sqrt() / 2.0, -(2.0).sqrt() / 2.0)),
             Vector3::new(0.0, 0.9701425001453319, -0.24253562503633294)

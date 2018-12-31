@@ -83,37 +83,26 @@ fn main() {
 
     scene.objects.push(Box::new(Sphere {
         object_to_world_space: ModelTransformation::new()
-            .translate(0.0, 0.0, -1.0)
-            .rotate_z(-FRAC_PI_4)
-            .rotate_y(-PI / 3.0)
+            .rotate_z(FRAC_PI_4)
+            .scale(0.5, 1.0, 0.5)
             .matrix(),
         material: Material {
-            color: Box::new(CheckersPattern {
-                a: Color::new(1.0, 0.2, 1.0),
-                b: Color::new(1.0, 0.0, 0.0),
-                object_to_pattern_space: ModelTransformation::new()
-                    .scale(10.0, 10.0, 10.0)
-                    .matrix(),
-            }),
+            color: Box::new(SolidPattern(Color::new(1.0, 1.0, 1.0))),
             ..Material::default()
         },
     }));
 
     scene.lights.push(PointLight {
         color: Color::new(1.0, 1.0, 1.0),
-        position: Point3::new(-1.0, -1.0, -4.0),
-    });
-    scene.lights.push(PointLight {
-        color: Color::new(1.0, 1.0, 1.0),
-        position: Point3::new(1.0, 0.0, -10.0),
+        position: Point3::new(-1.0, -1.0, -1.5),
     });
 
     let camera = Camera {
         canvas_width: 500,
         canvas_height: 400,
-        field_of_view_radians: FRAC_PI_4,
+        field_of_view_radians: FRAC_PI_2,
         transform: ViewTransformation {
-            from: Point3::new(0.0, 1.0, -5.0),
+            from: Point3::new(0.0, 0.0, -2.0),
             to: Point3::new(0.0, 0.0, 0.0),
             up: Vector3::y(),
         }
